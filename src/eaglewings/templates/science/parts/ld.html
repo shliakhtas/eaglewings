@@ -1,0 +1,25 @@
+<section id="ld">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">LD</span><div><span class="label">LD · детекція вирубки</span><h2>Чи можна знайти вирубку там, де її майже немає?</h2></div></div>
+    <div class="answer" id="ld-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Один рядок — піксель лісу 30 м за рік. Лейбл — втрата крон за Hansen. Згарища викинуті за EFFIS і FIRMS.</p></div>
+      <div class="dsbadge" id="ld-ds"></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Від одного знімка до моделі на всіх смугах.</p></div>
+      <div class="apwrap"><table class="ap" id="ld-ap"></table></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: половина парку × час</h4><p>Парк один, тому вибір на одній половині за 2018–2021, тест на другій за 2022–2024, і навпаки.</p></div><div><h4>Метрика: F1 площі</h4><p>Баланс точності й повноти за площею. У тесті лише 14 га втрат, тому інтервали широкі.</p></div></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>Правило обирає варіант за калібруванням, а не за тестом.</p></div>
+      <figure class="chart" id="c-ld-res"><figcaption><h3>F1 площі на тесті</h3><p class="read"><b>Як читати:</b> праворуч краще; вус це 95 % довірчий інтервал; жирний рядок обрано на калібруванні.</p></figcaption>
+        <div class="legend typeleg"></div><div class="plot"></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Діагностика</h3></div>
+      <figure class="chart"><figcaption><h3>Точність і повнота</h3></figcaption><div class="apwrap"><table class="ap" id="ld-tbl"></table></div></figure>      <figure class="chart" id="c-ld-map"><figcaption><h3>Кандидати за 2024 рік</h3><p class="read"><b>Як читати:</b> зелені є й у NASA OPERA, жовті лише в Sentinel-2. Це кандидати, а не доведені рубки.</p></figcaption><div class="map" id="m-ld" role="img" aria-label="Кандидати за 2024 рік"></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div>
+      <div class="mean" id="ld-mean"></div>
+    </div>
+  </div>
+</section>

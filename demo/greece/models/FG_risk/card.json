@@ -1,0 +1,21 @@
+{
+ "code": "FG_risk",
+ "task": "Які ділянки згорять",
+ "kind": "виміряно",
+ "approach": "f22_lgbm_all",
+ "selection": "max ROC-AUC на пожежі 2022",
+ "metric": "ROC-AUC",
+ "test": {
+  "roc_auc": 0.5248797947,
+  "ci": "0.450–0.605"
+ },
+ "datasets": [
+  "h3_risk_cells@v1 (e6f677dbc47123c8)"
+ ],
+ "created": "2026-11-12T13:12",
+ "note": "Негативний результат: на тесті майже випадково.",
+ "files": [
+  "card.json",
+  "model.joblib"
+ ]
+}

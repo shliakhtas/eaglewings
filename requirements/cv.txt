@@ -1,0 +1,11 @@
+# Комп'ютерний зір: детектори SD, CD і scripts/02_vision.py. Потрібен GPU з CUDA 12.8; поверх requirements/ds.txt.
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.11.0+cu128
+torchvision==0.26.0+cu128
+ultralytics==8.4.182
+segment-geospatial==1.4.2
+groundingdino-py==0.4.0
+transformers==4.49.0
+opencv-python-headless==5.0.0.93
+imageio==2.38.1
+imageio-ffmpeg==0.6.0

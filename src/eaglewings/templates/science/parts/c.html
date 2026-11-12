@@ -1,0 +1,69 @@
+<section id="c">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">FG</span><div><span class="label">FG · ризик ділянок</span><h2>Де ризик згоріти найвищий?</h2></div></div>
+    <div class="answer" id="c-answer"></div>
+
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Один рядок — гекс H3 ≈ 0,1 км². Ознаки — рельєф, ліс, люди. Лейбл — чи згорів гекс.</p></div>
+      <div class="dsbadge" id="c-ds"></div>
+      <figure class="chart" id="c-c-data">
+        <figcaption><h3>Лейбли та ознаки гексів</h3><p class="read"><b>Як читати:</b> лейбли — помаранчевий «так», сірий «ні»; ознаки — від темного (мало) до світлого (багато).</p></figcaption>
+        <div class="ctl"><select data-k="lay" aria-label="Шар"><optgroup label="Лейбли"><option value="y_burn_2023">Згоріло 2023 (FIRMS) — тест</option><option value="y_burn_2022">Згоріло 2022 (FIRMS) — валідація</option><option value="y_hist">Втрата лісу 2001–21 (Hansen) — навчання</option><option value="y_loss_2023_hansen">Загибель лісу 2023 (Hansen)</option><option value="y_dndvi_2023">Падіння NDVI 2023 (MODIS)</option></optgroup><optgroup label="Ознаки"><option value="elev">Висота</option><option value="treecover">Лісистість 2000</option><option value="slope">Крутизна</option><option value="d_village">Відстань до села</option><option value="d_road">Відстань до дороги</option><option value="track_km_km2">Щільність лісових треків</option></optgroup></select></div>
+        <div class="legend" id="c-data-leg"></div>
+        <div class="map" id="m-cdata" role="img" aria-label="Мапа лейблів і ознак гексів"></div>
+      </figure>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Довга історія багатьох подій проти однієї свіжої пожежі.</p></div>
+      <div class="apwrap"><table class="ap" id="c-ap"></table></div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how">
+        <div><h4>Протокол: вибір на 2022, звіт на 2023</h4><p>Підхід обираємо за пожежею <b>2022</b> (валідація), звітуємо на пожежі <b>2023</b>, якої не бачив жоден підхід.</p>
+          <div class="plot" id="c-proto"></div>
+          <ul><li>CI — bootstrap по блоках H3 (~5 км²).</li><li>Стеля — що дала б модель, знаючи лейбли того ж 2023 року.</li><li>Стійкість — ROC-AUC з трьома визначеннями «згоріло».</li></ul></div>
+        <div><h4>Метрика: ROC-AUC (+ recall у 20 % площі)</h4><p>Нам потрібне <b>ранжування</b> ділянок. ROC-AUC — шанс, що згоріла ділянка стоїть вище незгорілої. У 2023 році згоріло 67 % парку, тому PR-AUC майже тривіальний. <b>Recall у 20 % площі</b> — частка згарища в 20 % площі під посиленим наглядом.</p></div>
+      </div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>Тест — пожежа 2023.</p></div>
+      <figure class="chart" id="c-c-res">
+        <figcaption><h3>ROC-AUC підходів на 2023 році</h3><p class="read"><b>Як читати:</b> праворуч — краще; ліва лінія — випадково (0,5), права — стеля. Форма точки — на чому вчився підхід.</p></figcaption>
+        <div class="ctl"><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+        <div class="legend typeleg"></div>
+        <div class="plot"></div><div class="tbl" hidden></div>
+      </figure>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Діагностика</h3></div>
+      <div class="grid2">
+        <figure class="chart" id="c-c-sc">
+          <figcaption><span class="label" style="color:var(--orange)">ключовий графік</span><h3>Валідація 2022 vs тест 2023</h3><p class="read"><b>Як читати:</b> якби вибір на 2022 році переносився на 2023-й, точки лежали б уздовж діагоналі. Вони лежать майже навпаки.</p></figcaption>
+          <div class="ctl"><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+          <div class="legend typeleg"></div>
+          <div class="plot"></div><div class="tbl" hidden></div>
+        </figure>
+        <figure class="chart" id="c-c-why">
+          <figcaption><h3>Чому валідація 2022 обманює</h3><p class="read"><b>Як читати:</b> частка гексів, що згоріли у 2023 році, серед тих, що вже горіли у 2022-му, і серед решти.</p></figcaption>
+          <div class="plot"></div>
+        </figure>
+        <figure class="chart" id="c-c-imp">
+          <figcaption><h3>Що важливо для моделі на історії (LightGBM)</h3><p class="read"><b>Як читати:</b> на скільки падає ROC-AUC, якщо перемішати ознаку (permutation importance, тест 2023).</p></figcaption>
+          <div class="plot"></div>
+        </figure>
+        <figure class="chart" id="c-c-rob">
+          <figcaption><h3>Стійкість до визначення «згоріло»</h3><p class="read"><b>Як читати:</b> синє — краще за випадкове, червоне — гірше. Добрий підхід синій у всіх трьох колонках.</p></figcaption>
+          <div class="heatwrap"></div>
+        </figure>
+        <figure class="chart wide" id="c-c-map">
+          <figcaption><h3>Прогноз, факт і ризик 2026</h3><p class="read" id="c-map-read"></p></figcaption>
+          <div class="ctl"><div class="seg" data-k="lay"><button aria-pressed="true" data-v="pred">Прогноз 2023 vs факт</button><button aria-pressed="false" data-v="risk">Ризик 2026</button></div></div>
+          <div class="legend" id="c-map-leg"></div>
+          <div class="map" id="m-cmap" role="img" aria-label="Мапа прогнозу і ризику"></div>
+        </figure>
+      </div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div><div class="mean" id="c-mean"></div></div>
+  </div>
+</section>

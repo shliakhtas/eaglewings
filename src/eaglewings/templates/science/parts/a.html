@@ -1,0 +1,82 @@
+<section id="a">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">FD</span><div><span class="label">FD · детекція пожежі</span><h2>Що саме згоріло і скільки гектарів?</h2></div></div>
+    <div class="answer" id="a-answer"></div>
+
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Один рядок — піксель лісу 30 м. Лейбл — чи загинув ліс за Hansen у 2023–24.</p></div>
+      <div class="dsbadge" id="a-ds"></div>
+      <figure class="chart wide" id="c-spread">
+        <figcaption><span class="label">NASA FIRMS · пожежа 2023, яку міряє FD</span><h3>Як пожежа 2023 рухалася парком</h3>
+          <p class="what">Кожна точка — теплова детекція супутника. Пересувайте повзунок або натисніть «відтворити».</p><p class="read"><b>Як читати:</b> світлі точки — останні 12 годин, тьмяні — вже пройдені.</p></figcaption>
+        <div class="slider"><button class="tbtn" id="sp-play">▶ відтворити</button><input type="range" id="sp-range" min="0" max="290" value="290" aria-label="Година від початку пожежі"><b id="sp-lab"></b></div>
+        <div class="map" id="m-spread" role="img" aria-label="Мапа розвитку пожежі 2023"></div>
+      </figure>
+      <figure class="chart" id="c-a-data">
+        <figcaption><h3>Лейбли й розбиття на калібрування / тест</h3>
+          <p class="what">Сітка 120 м (агрегат пікселів 30 м). Перемкніть, щоб побачити лейбл або розбиття.</p><p class="read"><b>Як читати:</b> помаранчевий — ліс загинув у 2023–24 за Hansen; на вкладці «Розбиття» світлі блоки — тестова половина парку.</p></figcaption>
+        <div class="ctl"><div class="seg" data-k="mode"><button aria-pressed="true" data-v="y">Лейбл Hansen</button><button aria-pressed="false" data-v="s">Розбиття калібрування / тест</button></div></div>
+        <div class="legend" id="a-data-leg"></div>
+        <div class="plot"><canvas class="rast"></canvas></div>
+      </figure>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>FIRMS бачить вогонь (тепло), MODIS і Sentinel-2 бачать наслідок: зникла зелень і змінився відбиток згарища.</p></div>
+      <div class="apwrap"><table class="ap" id="a-ap"></table></div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how">
+        <div><h4>Протокол: просторове розбиття</h4><p>Парк поділено на блоки H3 (~5 км²). На половині блоків — <b>калібрування</b>: там обираємо поріг і гіперпараметри (82 конфігурації). Друга половина — <b>тест</b>: туди не дивимось до звіту.</p>
+          <ul><li>Вибір підходу — лише за калібруванням.</li><li>95 % CI — bootstrap по тестових блоках.</li><li>Стійкість: та сама метрика з лейблом «лише 2023».</li></ul></div>
+        <div><h4>Метрика: F1 (+ precision, recall, IoU)</h4><p>Площу згарища оцінюють збігом з еталоном (стандарт валідації згарищ CEOS). <b>F1</b> карає і за перебільшення (низька precision), і за пропуски (низький recall). Accuracy не підходить: фон домінує.</p></div>
+      </div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>Тестова половина парку.</p></div>
+      <figure class="chart" id="c-a-res">
+        <figcaption><h3>Сімейства підходів</h3><p class="read"><b>Як читати:</b> праворуч — краще; заповнена точка — тест, кільце — калібрування (на ньому обирали). Чим ближче вони, тим менше перенавчання.</p></figcaption>
+        <div class="ctl"><div class="seg" data-k="m"><button aria-pressed="true" data-v="f1">F1</button><button aria-pressed="false" data-v="precision">Precision</button><button aria-pressed="false" data-v="recall">Recall</button><button aria-pressed="false" data-v="iou">IoU</button></div><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+        <div class="legend typeleg"></div>
+        <div class="plot"></div><div class="tbl" hidden></div>
+      </figure>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Діагностика</h3><p>Чому переміг саме цей підхід.</p></div>
+      <div class="grid2">
+        <figure class="chart wide" id="c-a-conf">
+          <figcaption><h3>Де підхід збігається з еталоном, а де помиляється</h3><p class="read"><b>Як читати:</b> помаранчевий — згорів і знайдено; світлий — позначено, але ліс живий (перебільшення); сірий — згорів, але пропущено.</p></figcaption>
+          <div class="ctl"><div class="seg" data-k="who"><button aria-pressed="true" data-v="pc" id="a-champ-btn">Обраний підхід</button><button aria-pressed="false" data-v="pf">Базова: сирі пікселі FIRMS</button></div></div>
+          <div class="legend"><span><i style="background:var(--pos)"></i>збіг</span><span><i style="background:var(--r4)"></i>перебільшення</span><span><i style="background:#8f9a8f"></i>пропуск</span><span><i style="background:#26332b"></i>ліс без змін</span></div>
+          <div class="plot"><canvas class="rast"></canvas></div>
+        </figure>
+        <figure class="chart" id="c-a-area">
+          <figcaption><h3>Площа згарища: підхід vs еталон</h3><p class="read"><b>Як читати:</b> вертикальна лінія — площа за Hansen; праворуч від неї — перебільшення.</p></figcaption>
+          <div class="ctl"><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+          <div class="plot"></div><div class="tbl" hidden></div>
+        </figure>
+        <figure class="chart" id="c-a-sweep">
+          <figcaption><h3>Як обирали поріг</h3><p class="read"><b>Як читати:</b> зі зростанням порогу precision росте, recall падає; обираємо поріг з максимальним F1.</p></figcaption>
+          <div class="ctl"><select data-k="fam" aria-label="Сімейство"><option value="s2_dnbr">Падіння NBR Sentinel-2 (dNBR)</option><option value="modis_rdndvi">Відносне падіння NDVI</option><option value="modis_dndvi">Падіння NDVI (dNDVI)</option><option value="hybrid">dNDVI + підтвердження FIRMS</option></select><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+          <div class="plot"></div><div class="tbl" hidden></div>
+        </figure>
+        <figure class="chart wide" id="c-a-ndvi">
+          <figcaption><span class="label">MODIS MOD13Q1 · 250 м</span><h3>Зелень до, після і відновлення 2024–2026</h3><p class="read"><b>Як читати:</b> «Ураження» — наскільки впала зелень; «Відновлення» — яка частка втраченої зелені повернулась (100 % — як до пожежі).</p></figcaption>
+          <div class="ctl"><div class="seg" data-k="lay"><button aria-pressed="false" data-v="pre">NDVI до</button><button aria-pressed="false" data-v="post">NDVI після</button><button aria-pressed="true" data-v="dn">Ураження</button><button aria-pressed="false" data-v="2024">Відновлення 2024</button><button aria-pressed="false" data-v="2025">2025</button><button aria-pressed="false" data-v="2026">2026</button></div></div>
+          <div class="legend" id="a-ndvi-leg"></div>
+          <div class="plot"><canvas class="rast"></canvas></div>
+        </figure>
+        <figure class="chart" id="c-a-rec">
+          <figcaption><h3>Скільки зелені повернулося</h3><p class="read"><b>Як читати:</b> медіана по згорілих пікселях MODIS; 100 % — повне відновлення NDVI (трава й чагарники, ще не дерева).</p></figcaption>
+          <div class="plot"></div>
+        </figure>
+        <figure class="chart" id="c-a-ts">
+          <figcaption><h3>NDVI трьох ділянок 2021–2026</h3><p class="read"><b>Як читати:</b> провал у серпні 2023 — пожежа; контрольна ділянка показує звичайні сезонні коливання.</p></figcaption>
+          <div class="legend" id="a-ts-leg"></div>
+          <div class="plot"></div>
+        </figure>
+      </div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div><div class="mean" id="a-mean"></div></div>
+  </div>
+</section>

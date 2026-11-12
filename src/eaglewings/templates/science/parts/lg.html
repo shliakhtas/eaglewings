@@ -1,0 +1,27 @@
+<section id="lg">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">LG</span><div><span class="label">LG · розвиток вирубки</span><h2>Де рубатимуть наступного року?</h2></div></div>
+    <div class="answer" id="lg-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Один рядок — гекс H3 × рік. Лейбл — щонайменше 0,5 га нової втрати без згарищ.</p></div>
+      <div class="dsbadge" id="lg-ds"></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Від випадкового вибору до моделі на історії й ландшафті.</p></div>
+      <div class="apwrap"><table class="ap" id="lg-ap"></table></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: лише минуле</h4><p>Прогноз на рік Y вчиться на роках до Y. Вибір 2018–2020, тест 2021–2024.</p></div><div><h4>Метрика: частка втрат у 11 % гексів</h4><p>Якщо перевірити лише 11 % парку, скільки нових втрат туди потрапить. Випадковий вибір дає близько 11 %, на цьому тесті 6 %.</p></div></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>У тесті 39 га втрат.</p></div>
+      <figure class="chart" id="c-lg-res"><figcaption><h3>Частка втрат у 11 % гексів</h3><p class="read"><b>Як читати:</b> праворуч краще; вус це 95 % довірчий інтервал; жирний рядок обрано на валідації.</p></figcaption>
+        <div class="legend typeleg"></div><div class="plot"></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Діагностика</h3></div>
+      <figure class="chart"><figcaption><h3>По роках</h3><p class="read"><b>Як читати:</b> прогноз на рік Y вчиться лише на роках до Y. 2018–2020 валідація, далі тест.</p></figcaption><div class="apwrap"><table class="ap" id="lg-year"></table></div></figure>
+      <figure class="chart"><figcaption><h3>Частка втрат залежно від площі, яку перевіряємо</h3><p class="read"><b>Як читати:</b> замість одного порога 11 % показано всю криву: скільки нових втрат потрапляє в найризиковіші 2, 5, 11, 20, 30 і 50 % гексів. Тест 2021–2024.</p></figcaption><div class="apwrap"><table class="ap" id="lg-curve"></table></div></figure>
+      <figure class="chart" id="c-lg-map"><figcaption><h3>Прогноз на 2025 рік</h3><p class="read"><b>Як читати:</b> фіолетові гекси це 11 % найризикованіших.</p></figcaption><div class="map" id="m-lg" role="img" aria-label="Прогноз на 2025 рік"></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div>
+      <div class="mean" id="lg-mean"></div>
+    </div>
+  </div>
+</section>

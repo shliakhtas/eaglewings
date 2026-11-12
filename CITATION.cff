@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use EagleWings, please cite it as below."
+title: "EagleWings: data-analytics platform template"
+type: software
+authors:
+  - family-names: Shliakhta
+    given-names: Myroslav
+version: 0.1.0
+date-released: 2026-11-12
+license: Apache-2.0
+keywords:
+  - data science
+  - reproducibility
+  - remote sensing
+  - wildfire
+  - environmental monitoring

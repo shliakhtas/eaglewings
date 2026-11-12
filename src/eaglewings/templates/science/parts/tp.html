@@ -1,0 +1,29 @@
+<section id="tp">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">TP</span><div><span class="label">TP · де ставити вежі</span><h2>Чи побачили б вежі майбутні пожежі?</h2></div></div>
+    <div class="answer" id="tp-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Точки NASA FIRMS 2021–2025 у парку, зведені в пожежі правилом FM (2 км, 5 діб). Рельєф SRTM дає, що видно з кожного місця. Вежа: огляд 360°, щогла 15 м, 10 км, дим 20 м над землею.</p></div>
+      <div class="dsbadge" id="tp-ds"></div><div class="dsbadge" id="tp-ds2"></div><div class="tiles" id="tp-tiles"></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Три бази й жадібне покриття з різною вагою: кожна наступна вежа додає найбільше нового. Параметр: скільки найвищих місць розглядаємо, 30, 100 чи 300.</p></div>
+      <div class="apwrap"><table class="ap" id="tp-ap"></table></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: лише минуле</h4><p>Вежі ставимо за тим, що відомо до року Y. Валідація: дані до 2022, пожежі 2022. Тест: дані до 2023, пожежі 2023–2025. Вибір лише на валідації, а за рівності береться простіший варіант. Вага з вкладки «Ризик» вчилась на пожежі 2022, тому на валідації її немає: вона лише для порівняння на тесті.</p></div><div><h4>Метрики</h4><p><b>Перша точка</b>: частка пожеж, чия перша точка FIRMS у полі зору веж. Це головна метрика. <b>Хоч одна точка</b>: пожежу бачили бодай колись. <b>Згорілі гекси</b>: частка гексів пожежі 2023 у полі зору. Інтервал це бутстреп за пожежами.</p></div></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>Усі рядки цього графіка на 300 місцях-кандидатах, тест 2023–2025.</p></div>
+      <figure class="chart" id="c-tp-res"><figcaption><h3>Яку частку пожеж бачать вежі</h3><p class="read"><b>Як читати:</b> праворуч краще; вус це 95 % інтервал. Вага ризику не проходила валідацію, її показано для порівняння. Усі варіанти «покриття» дали ті самі три місця, тому їхні стовпчики однакові.</p></figcaption>
+        <div class="ctl"><div class="seg" data-k="m"><button aria-pressed="true" data-v="first">Перша точка</button><button aria-pressed="false" data-v="any">Хоч одна точка</button><button aria-pressed="false" data-v="burn">Згорілі гекси</button></div></div><div class="plot"></div></figure>
+      <figure class="chart"><figcaption><h3>Підібраний параметр: скільки місць розглядати</h3><p class="read"><b>Як читати:</b> кожна клітинка це частка пожеж за першою точкою на валідації й тесті. Вибір робився лише за числом до риски.</p></figcaption><div class="apwrap"><table class="ap" id="tp-pool"></table></div></figure>
+      <figure class="chart"><figcaption><h3>Усі числа, тест</h3></figcaption><div class="apwrap"><table class="ap" id="tp-tbl"></table></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Діагностика: скільки веж і за яких умов</h3><p>Місця ті самі, змінюємо лише умови. Це не вибір, а перевірка стійкості.</p></div>
+      <figure class="chart"><figcaption><h3>По роках</h3><p class="read"><b>Як читати:</b> прогресивний протокол: кожен рік вежі стоять лише за даними до нього. 2022 це валідація, далі тест.</p></figcaption><div class="apwrap"><table class="ap" id="tp-year"></table></div></figure>
+      <figure class="chart" id="c-tp-bud"><figcaption><h3>Скільки веж потрібно</h3><p class="read"><b>Як читати:</b> кожна нова вежа додана жадібно, тест 2023–2025.</p></figcaption><div class="plot"></div></figure>
+      <figure class="chart"><figcaption><h3>Якщо умови інші</h3><p class="read"><b>Як читати:</b> перший рядок це базові умови, далі змінюється одне число.</p></figcaption><div class="apwrap"><table class="ap" id="tp-sens"></table></div></figure>
+      <figure class="chart"><figcaption><h3>Обрані місця</h3><p class="read"><b>Як читати:</b> остаточні вежі за всіма даними до 2026 року. Кольорові гекси видно з веж, колір це рівні ризику. Кружок це перша точка пожежі 2021–2025: світлий у полі зору, сірий ні.</p></figcaption>
+        <div class="legend" id="tp-leg"></div><div class="map" id="m-tp" role="img" aria-label="Мапа веж"></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div><div class="mean" id="tp-mean"></div></div>
+  </div>
+</section>

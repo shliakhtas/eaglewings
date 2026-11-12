@@ -1,0 +1,68 @@
+  <header class="hero">
+    <div class="wrap g">
+      <div>
+        <span class="label">Аналітичне дослідження · три національні парки Фракії, Греція</span>
+        <h1 style="margin-top:16px">Ліси Фракії <em>після вогню</em></h1>
+        <p class="sub">У серпні 2023 року одна з найбільших пожеж в історії ЄС пройшла через Дадью, один з найцінніших лісів Європи. Ми зібрали супутникові дані за п'ять років по трьох національних парках: Дадья–Лефкімі–Суфлі, «Дельта Евросу» і «Східна Македонія й Фракія», щоб показати, що саме згоріло, чому пожежі повертаються на ті самі місця і що відбувається з лісом далі.</p>
+        <div class="ctas"><a class="btn primary" href="#happened">Що сталося ↓</a><a class="btn" href="app.html">Дослідити мапу</a></div>
+      </div>
+      <!-- parks:start -->
+      <div class="panel parks" aria-label="Парки дослідження: мапи й числа">
+        <div class="slides" tabindex="0" aria-roledescription="карусель"><button class="nav prev" aria-label="Попередній парк">‹</button><button class="nav next" aria-label="Наступний парк">›</button>
+        <div class="track">
+          <figure class="slide" data-park="dadia">
+            <div class="top"><i></i><i></i><i></i><span>НП Дадья–Лефкімі–Суфлі · втрати лісу 2023–24 і теплові точки</span></div>
+            <div class="stack"><img src="assets/landing/park_dadia.jpg" alt="НП Дадья–Лефкімі–Суфлі: супутниковий знімок, втрати лісу 2023–24 і теплові точки FIRMS" loading="lazy"></div>
+            <div class="kpis">
+              <div class="kpi"><b>17 380 га</b><span>втрат лісу 2023–24</span></div>
+              <div class="kpi"><b>2 287</b><span>теплових точок 2023</span></div>
+              <div class="kpi"><b>43 053 га</b><span>площа парку</span></div>
+            </div>
+          </figure>
+          <figure class="slide" data-park="evros_delta">
+            <div class="top"><i></i><i></i><i></i><span>НП «Дельта Евросу» · втрати лісу 2023–24 і теплові точки</span></div>
+            <div class="stack"><img src="assets/landing/park_evros_delta.jpg" alt="НП «Дельта Евросу»: супутниковий знімок, втрати лісу 2023–24 і теплові точки FIRMS" loading="lazy"></div>
+            <div class="kpis">
+              <div class="kpi"><b>1 га</b><span>втрат лісу 2023–24</span></div>
+              <div class="kpi"><b>129</b><span>теплових точок 2023</span></div>
+              <div class="kpi"><b>19 080 га</b><span>площа парку</span></div>
+            </div>
+          </figure>
+          <figure class="slide" data-park="emt">
+            <div class="top"><i></i><i></i><i></i><span>НП «Східна Македонія й Фракія» · втрати лісу 2023–24 і теплові точки</span></div>
+            <div class="stack"><img src="assets/landing/park_emt.jpg" alt="НП «Східна Македонія й Фракія»: супутниковий знімок, втрати лісу 2023–24 і теплові точки FIRMS" loading="lazy"></div>
+            <div class="kpis">
+              <div class="kpi"><b>23 га</b><span>втрат лісу 2023–24</span></div>
+              <div class="kpi"><b>129</b><span>теплових точок 2023</span></div>
+              <div class="kpi"><b>95 145 га</b><span>площа парку</span></div>
+            </div>
+          </figure>
+        </div></div>
+        <div class="lg"><span><i style="background:#ff6b2c"></i>втрати лісу 2023–24 (Hansen)</span><span><i style="background:#ffd166;border-radius:50%"></i>теплові точки FIRMS 2021–2025</span></div>
+        <div class="dots"><button class="dot" data-i="0" aria-label="Дадья"></button><button class="dot" data-i="1" aria-label="Дельта Евросу"></button><button class="dot" data-i="2" aria-label="Східна Македонія й Фракія"></button></div>
+      </div>
+      <!-- parks:end -->
+      <script>
+      (() => {                       // карусель парків: сама гортається; кружечки, стрілки, перетягування мишею, свайп, жест тачпада, клавіші ← →; під курсором пауза
+        const p = document.currentScript.parentElement.querySelector('.parks'); if (!p) return;
+        const box = p.querySelector('.slides'), track = p.querySelector('.track'), dots = [...p.querySelectorAll('.dot')], n = dots.length;
+        let i = 0, hold = false, x0 = null, dx = 0, wheelAt = 0;
+        const go = k => { i = (k + n) % n; track.style.transition = ''; track.style.transform = `translateX(${-i * 100}%)`; dots.forEach((d, j) => d.classList.toggle('on', j === i)); };
+        dots.forEach((d, j) => d.onclick = () => go(j));
+        p.querySelector('.prev').onclick = () => go(i - 1); p.querySelector('.next').onclick = () => go(i + 1);
+        box.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; x0 = e.clientX; dx = 0; track.style.transition = 'none'; box.setPointerCapture(e.pointerId); box.classList.add('drag'); });
+        box.addEventListener('pointermove', e => { if (x0 === null) return; dx = e.clientX - x0; track.style.transform = `translateX(calc(${-i * 100}% + ${dx}px))`; });
+        const up = () => { if (x0 === null) return; x0 = null; box.classList.remove('drag'); const w = box.clientWidth; go(Math.abs(dx) > w * .15 ? i + (dx < 0 ? 1 : -1) : i); };
+        box.addEventListener('pointerup', up); box.addEventListener('pointercancel', up);
+        box.addEventListener('wheel', e => { if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) || Math.abs(e.deltaX) < 8) return; e.preventDefault();
+          const t = Date.now(); if (t - wheelAt > 600) { wheelAt = t; go(i + (e.deltaX > 0 ? 1 : -1)); } }, {passive: false});
+        box.addEventListener('keydown', e => { if (e.key === 'ArrowRight') go(i + 1); if (e.key === 'ArrowLeft') go(i - 1); });
+        box.addEventListener('dragstart', e => e.preventDefault());
+        ['mouseenter', 'touchstart', 'focusin'].forEach(e => p.addEventListener(e, () => hold = true, {passive: true}));
+        ['mouseleave', 'touchend', 'focusout'].forEach(e => p.addEventListener(e, () => hold = false, {passive: true}));
+        go(0);
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(() => { if (!hold && !document.hidden) go(i + 1); }, 5000);
+      })();
+      </script>
+    </div>
+  </header>

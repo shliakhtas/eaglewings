@@ -1,0 +1,27 @@
+<section id="cp">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">CP</span><div><span class="label">CP · де ставити камери</span><h2>Які місця на дорогах перехоплять під'їзд до рубок?</h2></div></div>
+    <div class="answer" id="cp-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Дороги й стежки OpenStreetMap, нові втрати лісу Hansen поза згарищами, пожежі FIRMS. Наземна камера чи фотопастка бачить лише свій відрізок дороги, тому важить не рельєф, а те, через що проходить під'їзд.</p></div>
+      <div class="dsbadge" id="cp-ds"></div><div class="tiles" id="cp-tiles"></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Від кожного в'їзду в парк будуємо дерево найкоротших під'їздів. Камера перехоплює все, що лежить за нею на цьому дереві. Параметр: дозволяти всі дороги чи лише лісові.</p></div>
+      <div class="apwrap"><table class="ap" id="cp-ap"></table></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: лише минуле</h4><p>Місця обираємо за тим, що відомо до року Y. Валідація: дані до 2018, рубки 2018–2020, пожежі 2021. Тест: дані до 2021, рубки 2021–2024, пожежі 2022–2025. Вибір лише на валідації. Перший варіант тесту, 2023–2024, мав лише 2 рубки і дав 0 %. Тому тест розширено, а той результат лишається в звіті нижче.</p></div><div><h4>Метрики</h4><p><b>Рубки</b>: частка рубок, найкоротший під'їзд до яких проходить через камеру. Це головна метрика. <b>Пожежі</b>: те саме для перших точок пожеж. <b>Ліс</b>: частка лісових гексів за камерами. Інтервал це бутстреп за подіями.</p></div></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>Тест 2021–2024, 10 камер.</p></div>
+      <figure class="chart" id="c-cp-res"><figcaption><h3>Що перехоплюють камери</h3><p class="read"><b>Як читати:</b> праворуч краще; вус це 95 % інтервал для рубок.</p></figcaption>
+        <div class="ctl"><div class="seg" data-k="m"><button aria-pressed="true" data-v="log">Рубки</button><button aria-pressed="false" data-v="fire">Пожежі</button><button aria-pressed="false" data-v="forest">Ліс</button></div></div><div class="plot"></div></figure>
+      <figure class="chart"><figcaption><h3>Усі числа</h3><p class="read"><b>Як читати:</b> вибір робився лише за валідацією.</p></figcaption><div class="apwrap"><table class="ap" id="cp-tbl"></table></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Діагностика: скільки камер і чи тримається</h3><p>Місця обрані, тепер перевіряємо стійкість. Це не вибір.</p></div>
+      <figure class="chart"><figcaption><h3>По роках</h3><p class="read"><b>Як читати:</b> прогресивний протокол: кожен рік місця обрано лише за даними до нього. 2018–2020 валідація, далі тест.</p></figcaption><div class="apwrap"><table class="ap" id="cp-year"></table></div></figure>
+      <figure class="chart"><figcaption><h3>Скільки камер потрібно</h3></figcaption><div class="apwrap"><table class="ap" id="cp-bud"></table></div></figure>
+      <figure class="chart"><figcaption><h3>Перевірка припущень</h3><p class="read"><b>Як читати:</b> перший рядок це основний тест, далі те, що може зменшити результат.</p></figcaption><div class="apwrap"><table class="ap" id="cp-sens"></table></div></figure>
+      <figure class="chart"><figcaption><h3>Обрані місця</h3><p class="read"><b>Як читати:</b> остаточні 10 місць за всіма даними. Жовті лінії це під'їзди, які проходять через камери. Кружок це рубка: зелений перехоплено, сірий ні.</p></figcaption><div class="map" id="m-cp" role="img" aria-label="Мапа камер"></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div><div class="mean" id="cp-mean"></div></div>
+  </div>
+</section>

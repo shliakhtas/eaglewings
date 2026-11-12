@@ -1,0 +1,43 @@
+# середовище й службове
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.env
+.vscode/
+logs/
+
+# великі сирі дані: завантажує scripts/01_fetch_data.py і scripts/00_fetch_benchmarks.py
+data/raw/nasa/
+data/raw/parks/*/nasa/
+data/raw/benchmarks/
+data/processed/**/*.tif
+data/processed/**/*.npy
+data/processed/**/*.pt
+data/processed/**/sat_*.jpg
+data/processed/**/hansen_loss.geojson
+
+# ваги сторонніх детекторів: завантажуються з офіційних джерел, не поширюємо
+models/weights/
+artifacts/reports/
+
+# ваги детекторів і знімки Esri не поширюємо: качаються з першоджерел скриптами
+*.pt
+web/assets/sat_*.jpg
+# знімки ділянок Esri для потоку моніторингу кожного парку
+web/assets/scene_*_s*.jpg
+web/assets/landing/
+
+# запис супутникового розділу застосунку показує знімки Esri: не поширюємо, перезнімає scripts/app_recordings.py
+web/assets/app/app_sat*
+
+# службове: перекладний словник і копії сторінок збирає крок i18n
+exports/
+*.pt
+
+# GitHub: без даних і зібраних сторінок (їх відтворює `eaglewings run`; живий кейс — https://eaglewings.noosvit.com)
+data/
+web/*
+!web/landing/
+!web/assets/
+web/assets/*
+!web/assets/photo_*.jpg

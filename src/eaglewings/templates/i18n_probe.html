@@ -1,0 +1,26 @@
+<!doctype html><meta charset="utf-8"><body><iframe id="f" style="width:1440px;height:900px"></iframe><pre id="o"></pre>
+<script>
+const NUM = /\d+(?:[ \u00a0\u202f][\d]{3})*(?:[.,]\d+)?/g, CYR = /[А-Яа-яЄєІіЇїҐґ]/, OUT = new Map();
+const norm = s => { let i = 0; return s.replace(NUM, () => '{' + (i++) + '}'); };
+function grab(doc){ const add = t => { t = (t || '').trim(); if (t && CYR.test(t)) { const k = /\d/.test(t) ? norm(t) : t; OUT.set(k, (OUT.get(k) || 0) + 1); } };
+  const walk = n => { if (n.nodeType === 3) add(n.nodeValue); else if (n.nodeType === 1 && !['SCRIPT','STYLE'].includes(n.tagName)) { ['placeholder','title','alt','aria-label'].forEach(a => add(n.getAttribute(a))); n.childNodes.forEach(walk); } };
+  walk(doc.body); add(doc.title);
+  doc.querySelectorAll('iframe').forEach(fr => { try { grab(fr.contentDocument); } catch(e){} }); }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const load = u => new Promise(r => { const f = document.getElementById('f'); f.onload = () => setTimeout(r, 2500); f.src = u; });
+async function clickAll(sel, wait = 400){ const d = document.getElementById('f').contentDocument; for (const b of [...d.querySelectorAll(sel)]) { try { b.click(); } catch(e){} await sleep(wait); grab(d); } }
+(async () => { try {
+  const part = location.hash.slice(1);
+  if (part.startsWith('page:')) { await load(part.slice(5)); grab(document.getElementById('f').contentDocument); }
+  else if (part.startsWith('app:')) {
+    const p = part.slice(4); await load('/app.html?park=' + p); const d = () => document.getElementById('f').contentDocument; grab(d());
+    await clickAll('[data-panel="p-monitor"]'); await clickAll('.tabs[data-group] button', 600);
+    await clickAll('[data-panel="p-analytics"]', 1500); await clickAll('#anMapTabs [data-k]', 700);
+    await clickAll('[data-panel="p-routes"]', 1200); await clickAll('#routesBody [data-rt]', 300);
+    await clickAll('[data-panel="p-tasks"]', 800); await clickAll('#taskChips .chip', 300); await clickAll('#taskChips .chip', 300);
+    await clickAll('[data-panel="p-chat"]'); await clickAll('#chatChips .chip', 900);
+    await clickAll('[data-panel="p-monitor"]'); await clickAll('[data-tab="v-areals"]'); await clickAll('#zoneBody [data-detail]', 500);
+  }
+  document.getElementById('o').textContent = JSON.stringify([...OUT.keys()]);
+} catch (e) { document.getElementById('o').textContent = 'ERR ' + e; } })();
+</script>

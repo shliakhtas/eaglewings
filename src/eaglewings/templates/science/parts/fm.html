@@ -1,0 +1,25 @@
+<section id="fm">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">FM</span><div><span class="label">FM · матчинг пожежі</span><h2>Які теплові точки це одна пожежа?</h2></div></div>
+    <div class="answer" id="fm-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Один рядок — сигнал FIRMS. Лейбл — згарище EFFIS, якому він належить.</p></div>
+      <div class="dsbadge" id="fm-ds"></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Від «кожна точка окремо» до зведення в часі й просторі.</p></div>
+      <div class="apwrap"><table class="ap" id="fm-ap"></table></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: вибір на минулому</h4><p>Параметри обрано на 2021–2023, тест на 2024–2025. Оцінюються лише сигнали, що мають еталон у EFFIS.</p></div><div><h4>Метрика: BCubed F1</h4><p>Оцінює кожен сигнал окремо: чи стоїть він разом зі своїми і не змішаний із чужими. Великі пожежі не затуляють малі. Вибірка: 279 згарищ.</p></div></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>Тест 2024–2025.</p></div>
+      <figure class="chart" id="c-fm-res"><figcaption><h3>BCubed F1</h3><p class="read"><b>Як читати:</b> праворуч краще; вус це 95 % довірчий інтервал.</p></figcaption>
+        <div class="legend typeleg"></div><div class="plot"></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Діагностика</h3></div>
+      <figure class="chart"><figcaption><h3>Де саме помиляється кожен підхід</h3></figcaption><div class="apwrap"><table class="ap" id="fm-tbl"></table></div></figure>      <figure class="chart" id="c-fm-map"><figcaption><h3>Найбільші пожежі парку за 2021–2025</h3><p class="read"><b>Як читати:</b> коло це одна пожежа після зведення, що більше коло, то більше точок.</p></figcaption><div class="map" id="m-fm" role="img" aria-label="Найбільші пожежі парку за 2021–2025"></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div>
+      <div class="mean" id="fm-mean"></div>
+    </div>
+  </div>
+</section>

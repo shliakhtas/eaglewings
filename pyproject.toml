@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# точні версії для відтворення: requirements/ds.txt і requirements/cv.txt (GPU, torch з індексу CUDA 12.8)
+name = "eaglewings"
+version = "0.1.0"
+description = "EagleWings: ready data-analytics platform template — pipelines, research page, app with an AI assistant, landing, two languages"
+requires-python = ">=3.11,<3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Myroslav Shliakhta" }]
+dependencies = [
+  "clearml",
+  "folium",
+  "geopandas",
+  "h3",
+  "huggingface_hub",
+  "joblib",
+  "lightgbm",
+  "matplotlib",
+  "nbclient",
+  "prefect",
+  "markdown",
+  "ipykernel",
+  "nbformat",
+  "networkx",
+  "numpy",
+  "ortools",
+  "pandas",
+  "pillow",
+  "pyarrow",
+  "pyproj",
+  "pyvroom",
+  "rasterio",
+  "requests",
+  "scikit-learn",
+  "scipy",
+  "shapely",
+  "xlrd",
+]
+
+[project.scripts]
+eaglewings = "eaglewings.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+eaglewings = ["templates/**/*", "scripts/*.py", "scripts/*.sh", "assistant/**/*"]

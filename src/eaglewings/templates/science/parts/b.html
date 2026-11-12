@@ -1,0 +1,75 @@
+<section id="b">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">FG</span><div><span class="label">FG · день пожежі</span><h2>Чи буде завтра пожежа — вмикати посилене чергування?</h2></div></div>
+    <div class="answer" id="b-answer"></div>
+
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Один рядок — доба. Ознаки — погода NASA POWER. Лейбл — чи була детекція FIRMS.</p></div>
+      <div class="dsbadge" id="b-ds"></div>
+      <div class="grid2">
+        <figure class="chart wide" id="c-b-cal">
+          <figcaption><h3>Календар пожежних днів 2021–2025</h3><p class="read"><b>Як читати:</b> кожна клітинка — доба; помаранчева — у зоні парку була пожежа, з білою рамкою — почалося нове займання.</p></figcaption>
+          <div class="legend"><span><i style="background:var(--pos)"></i>день з пожежею</span><span><i style="background:var(--pos);outline:1.5px solid #fff;outline-offset:-1.5px"></i>нове займання</span><span><i style="background:#1f2a23"></i>без пожежі</span></div>
+          <div class="plot"></div>
+        </figure>
+        <figure class="chart wide" id="c-b-wx">
+          <figcaption><h3>Погодні ознаки та пожежні дні</h3><p class="read"><b>Як читати:</b> лінія — обрана ознака; помаранчеві точки над графіком — дні з пожежею, кільця — нові займання.</p></figcaption>
+          <div class="ctl"><select data-k="var" aria-label="Ознака"><option value="dry_days">Сухих днів поспіль</option><option value="VPD_7">Сухість повітря VPD, 7 діб (кПа)</option><option value="nesterov">Індекс Нестерова</option><option value="T2M_MAX">Макс. температура, °C</option><option value="GWET_7">Вологість ґрунту, 7 діб</option><option value="RH2M">Відносна вологість, %</option></select><div class="seg" data-k="year"></div><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+          <div class="plot"></div><div class="tbl" hidden></div>
+        </figure>
+      </div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Правило з однієї ознаки проти моделі, що комбінує погоду.</p></div>
+      <div class="apwrap"><table class="ap" id="b-ap"></table></div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how">
+        <div><h4>Протокол: перевірка вперед у часі</h4><p>Модель ніколи не бачить майбутнього: навчаємось на минулих роках, перевіряємо на наступному.</p>
+          <div class="plot" id="b-proto"></div></div>
+        <div><h4>Метрика: PR-AUC (+ recall у 10 % днів)</h4><p>Пожежних днів ~3 %, тому ROC-AUC тут оманливо високий. <b>PR-AUC</b> чесно показує, наскільки прогноз кращий за випадковий (≈ 0,03). <b>Recall у 10 % днів</b> — операційна відповідь: якщо чергувати посилено в 10 % найризиковіших днів, яку частку пожеж ми накриємо.</p>
+          <ul><li>CI — bootstrap 14-денними блоками (пожежі йдуть серіями).</li><li>Дві цілі: день з пожежею і нове займання.</li></ul></div>
+      </div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>Прогнози 2023–2025, яких модель не бачила.</p></div>
+      <div class="ctl"><span class="label" style="margin-right:4px">Ціль</span><div class="seg" id="b-target"><button aria-pressed="true" data-v="fire_day">День з пожежею</button><button aria-pressed="false" data-v="ignition">Нове займання</button></div></div>
+      <figure class="chart" id="c-b-res">
+        <figcaption><h3>PR-AUC підходів</h3><p class="read"><b>Як читати:</b> праворуч — краще; вертикальна лінія — випадковий прогноз. * — не прогноз: потрібне вчорашнє спостереження.</p></figcaption>
+        <div class="ctl"><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+        <div class="legend typeleg"></div>
+        <div class="plot"></div><div class="tbl" hidden></div>
+      </figure>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Діагностика</h3></div>
+      <div class="grid2">
+        <figure class="chart wide" id="c-b-ts">
+          <figcaption><h3>Щоденний ризик чемпіона й реальні пожежі</h3><p class="read"><b>Як читати:</b> лінія — оцінка ризику дня; вище горизонтальної лінії — 10 % найризиковіших днів («тривога»); помаранчеві точки — дні з подією.</p></figcaption>
+          <div class="ctl"><div class="seg" data-k="yr"></div><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+          <div class="plot"></div><div class="tbl" hidden></div>
+        </figure>
+        <figure class="chart" id="c-b-coef">
+          <figcaption><h3>Що модель вважає важливим</h3><p class="read"><b>Як читати:</b> стандартизовані коефіцієнти чемпіона; помаранчеві підвищують ризик, сірі — знижують.</p></figcaption>
+          <div class="plot"></div>
+        </figure>
+        <figure class="chart" id="c-b-pr">
+          <figcaption><h3>Precision–recall криві</h3><p class="read"><b>Як читати:</b> що вище крива, то менше хибних тривог при тому самому recall. Наведіть, щоб підсвітити.</p></figcaption>
+          <div class="legend" id="b-pr-leg"></div>
+          <div class="plot"></div>
+        </figure>
+        <figure class="chart" id="c-b-year">
+          <figcaption><h3>PR-AUC за тестовими роками</h3><p class="read"><b>Як читати:</b> 2023 — рік великої пожежі; 2024–2025 майже без пожеж, тому там метрики шумні.</p></figcaption>
+          <div class="heatwrap"></div>
+        </figure>
+        <figure class="chart" id="c-b-dry">
+          <figcaption><h3>Посуха → пожежі</h3><p class="read"><b>Як читати:</b> частка пожежних днів у кожному децилі «днів без дощу»; Д10 — найдовші посухи.</p></figcaption>
+          <div class="ctl"><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+          <div class="plot"></div><div class="tbl" hidden></div>
+        </figure>
+      </div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div><div class="mean" id="b-mean"></div></div>
+  </div>
+</section>

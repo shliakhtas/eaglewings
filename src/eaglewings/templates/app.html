@@ -1,0 +1,1142 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>НП Дадья · Застосунок</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --bg:#0e1411; --panel:#141c17; --panel2:#18221c; --line:#26332b; --text:#ece8dc; --muted:#8f9a8f;
+  --orange:#ff6b2c; --yellow:#e5c13a; --green:#7fbf5f; --violet:#a78bfa; --cyan:#22d3ee;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace; --display:"Unbounded",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.mono{font-family:var(--mono)}
+.label{font:500 11px/1.4 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+html,body{height:100%}
+body{display:flex;flex-direction:column}
+header{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--line)}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font:12px var(--mono);color:var(--muted)}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block}
+h1{font:800 20px/1.15 var(--display);margin:6px 0 0;letter-spacing:-.01em}
+h1 span{color:var(--muted);font:400 13px Inter;display:block;margin-top:6px;letter-spacing:0}
+.kpis{display:flex;flex-wrap:wrap;gap:8px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 10px;min-width:100px}
+.kpi b{display:block;font:600 15px var(--mono)}
+main{padding:12px 24px;flex:1 0 600px;display:flex;flex-direction:column;min-height:0}
+.views{display:flex;gap:6px;flex-wrap:wrap}
+.views button{flex:0 0 auto;background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:9px 16px;font:600 13px Inter;cursor:pointer}
+.views button.on{background:var(--orange);border-color:var(--orange);color:#1a0e06}
+.view{display:grid;grid-template-columns:190px minmax(380px,5fr) 7fr;gap:16px;flex:1;min-height:0}
+.view>.win[hidden]{display:none}
+.side{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 10px;display:flex;flex-direction:column;gap:4px}
+.side-hd{font:600 13px Inter;color:var(--text);padding:2px 10px 10px}
+.side-it{all:unset;cursor:pointer;padding:12px 14px;border-radius:10px;font:500 14px Inter;color:var(--text)}
+.side-it:hover{background:var(--panel2)}
+.side-it.on{background:linear-gradient(90deg,#ff6b2c,#e5a33a);color:#1a0e06;font-weight:600}
+.park-sel{display:flex;flex-direction:column;gap:2px}.side-it.park{padding:9px 14px;font-size:13.5px;color:var(--soft)}.side-it.park::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor;margin-right:9px;vertical-align:1px}.side-it.park.on{background:var(--panel2);color:var(--text);font-weight:600}.side-it.park.on::before{background:var(--orange);border-color:var(--orange)}
+.side-it:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.rt-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.rt-kpi div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.rt-kpi b{display:block;font:600 17px var(--mono)}
+.rt-team{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;background:var(--panel2)}
+.rt-hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.rt-pin{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50% 50% 50% 0;rotate:-45deg;background:var(--c);border:2px solid var(--t);font:800 12px Inter;color:#0e1411}
+.rt-pin{rotate:0deg;border-radius:6px}
+.act-g{margin-bottom:6px}
+.vmark{transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:3px;background:#0e1411;border:2px solid var(--t);color:var(--t);border-radius:7px;padding:1px 5px;font:700 11px var(--mono);white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,.5)}
+.vmark b{color:#ece8dc}
+.tchip{display:inline-block;color:#0e1411;font:700 10px var(--mono);border-radius:4px;padding:0 4px;margin-right:2px}
+.journal .jr.plan{opacity:.7}
+.journal .jr{display:grid;grid-template-columns:44px 34px 1fr;gap:6px;font-size:12px;padding:3px 0;border-bottom:1px solid var(--line)}.act-g .label{display:block;margin-bottom:1px;font-size:10px}
+.rt-stop.done{opacity:.5}
+.rt-stop.new{background:#2a160c}
+.reroute{border:1px solid var(--orange);background:#2a160c;border-radius:8px;padding:8px 10px;margin:6px 0;font-size:12px}
+.rt-stop{display:grid;grid-template-columns:28px 48px 1fr;gap:8px;align-items:start;padding:6px 4px;border-top:1px solid var(--line);font-size:13px;cursor:pointer}
+.rt-stop:hover{background:#1b241e}
+.rt-stop.base{display:block;color:var(--muted);font:12px var(--mono);cursor:default}
+.rt-num{display:inline-block;min-width:22px;height:22px;border-radius:11px;color:#0e1411;font:700 11px/22px var(--mono);text-align:center;padding:0 3px}
+.view.wide{grid-template-columns:190px 1fr}
+.view.wide>.mapwrap{display:none}
+.soon-tag{font:600 10px var(--mono);text-transform:uppercase;color:var(--orange);border:1px solid var(--orange);border-radius:4px;padding:0 4px;margin-left:6px}
+.side-it.on .soon-tag{color:#1a0e06;border-color:#1a0e06}
+.chat-body{display:flex;flex-direction:column;gap:10px}
+.msg{max-width:78%;padding:9px 12px;border-radius:12px;font-size:13.5px;line-height:1.5}
+.msg.me{align-self:flex-end;background:#2a160c;border:1px solid var(--orange)}
+.msg.ai{align-self:flex-start;background:var(--panel2);border:1px solid var(--line)}
+.msg .who{display:block;font:500 10px var(--mono);text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.chat-in{border-top:1px solid var(--line);padding:10px 14px}
+.keyrow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.keybox{flex:1;min-width:0;display:flex;align-items:center;gap:8px;background:#11241a;border:1px solid #24503a;border-radius:8px;padding:0 10px;transition:border-color .15s}
+.keybox:focus-within{border-color:var(--orange)}
+.keybox svg{flex:none;color:#5fd08a}
+.keybox input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--text);font:12.5px var(--mono);padding:7px 0}
+.keybox input::placeholder{color:#7fa58e;opacity:.85}
+.keystate{display:inline-flex;align-items:center;gap:6px;font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.03em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.keystate::before{content:"";width:6px;height:6px;border-radius:3px;background:currentColor}
+.keystate.ok{color:#5fd08a;border-color:#2c5a3c}
+.keystate.bad{color:#ff7a6b;border-color:#6a2f28}
+.keystate.wait{color:var(--orange);border-color:#6a3a1a}
+.typing{color:var(--muted);font-size:12px}
+.ttable{width:100%;border-collapse:collapse;font-size:13px}
+.ttable td,.ttable th{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+.ttable tr.st-done td{opacity:.5}
+.ttable select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:6px;font:inherit;font-size:12px;padding:2px 4px}
+.ttag{display:inline-block;font:600 10.5px var(--mono);border-radius:5px;padding:1px 6px;border:1px solid currentColor;white-space:nowrap}
+.an-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:14px}
+.an-card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;position:relative}
+.an-card h3{margin:0 0 2px;font:600 14px Inter}
+.an-card .sub{color:var(--muted);font-size:12px;margin-bottom:8px}
+#anSl[hidden]{display:none!important}
+.an-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.an-tile{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.an-tile b{display:block;font:600 24px var(--mono)} .an-tile span{color:var(--muted);font-size:12px}
+.an-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:4px}
+.an-leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.an-tip{position:absolute;pointer-events:none;background:#0e1411;border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:12px;color:var(--text);white-space:nowrap;display:none;z-index:5}
+.soon{border:1px dashed var(--line);border-radius:12px;padding:28px 22px;text-align:center;margin-top:20px}
+.soon b{font:800 18px var(--display);display:block;margin-bottom:8px}
+.view[hidden]{display:none}
+.win{background:var(--panel);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.win>.hd{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.win>.hd .label{margin-right:auto}
+.live{color:var(--orange)} .live::before{content:"● ";}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs button,.chip,.btn{background:transparent;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font:500 12px Inter;cursor:pointer}
+.tabs button.on,.chip.on{border-color:var(--orange);color:var(--orange)}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:#1a0e06;font-weight:600}
+.btn:hover,.chip:hover,.tabs button:hover{border-color:#3d4d42}
+.body{flex:1;overflow:auto;padding:14px;min-height:0}
+video{width:100%;border-radius:10px;background:#000;display:block}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+/* акаунт: картка користувача внизу сайдбару + спливаюче меню */
+.side{position:relative}
+.side-sp{flex:1}
+.ucard{all:unset;cursor:pointer;display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;border:1px solid var(--line);min-width:0}
+.ucard:hover{background:var(--panel2)}
+.ucard:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.ucard .av{flex:0 0 30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#ff6b2c,#e5c13a);color:#1a0e06;font:800 13px/30px Inter;text-align:center}
+.ucard .em{flex:1;min-width:0;font:500 12px Inter;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ucard .em small{display:block;color:var(--muted);font:500 10px var(--mono);text-transform:uppercase}
+.ucard .chev{color:var(--muted);font-size:11px}
+.umenu{position:absolute;left:8px;right:8px;bottom:64px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:8px;display:none;flex-direction:column;gap:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:20}
+.umenu.open{display:flex}
+.stat-card{border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:12px}
+.stat-card .t{font:500 10px var(--mono);text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.stat-card .bar{height:4px;border-radius:2px;background:var(--line);margin-top:5px;overflow:hidden}.stat-card .bar i{display:block;height:100%;background:var(--green)}
+.umenu .btn{text-align:left;width:100%}
+.app-note{font-size:11px;color:var(--muted);padding:0 4px 6px;line-height:1.4}
+.mbox.sm{width:min(420px,100%)}
+.mbox.md{width:min(980px,100%)}
+.form{display:flex;flex-direction:column;gap:10px;padding:16px}
+.form input{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:14px Inter}
+.form .err{color:var(--orange);font-size:12px;min-height:16px}
+.plans{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.plan{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel2);display:flex;flex-direction:column;gap:6px}
+.plan.cur{border-color:var(--green)}
+.plan b{font:800 15px var(--display)} .plan .pr{font:600 18px var(--mono)} .plan .pr small{font:12px Inter;color:var(--muted)}
+.msg .fb{display:flex;gap:4px;margin-top:6px}
+.msg .fb button{all:unset;cursor:pointer;font-size:13px;padding:1px 6px;border:1px solid var(--line);border-radius:6px;opacity:.75}
+.msg .fb button.on{border-color:var(--orange);opacity:1}
+.conv{display:flex;gap:6px;align-items:center;margin-left:auto}
+.conv[hidden]{display:none}
+#satPin{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,.5);pointer-events:none}
+.geo-btn{display:block;margin-top:8px}.geo-btn.on{border-color:var(--orange);color:var(--orange)}.geo-btn:disabled{opacity:.5;cursor:default}
+.conv select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 6px;font:12px Inter;max-width:220px}
+.banner{display:none;margin:10px 0 0;padding:10px 12px;border-radius:10px;border:1px solid var(--orange);background:#2a160c;color:#ffd2bd;font-weight:500}
+.banner .label{color:var(--orange)}
+.log{margin-top:10px;font:12px/1.6 var(--mono);max-height:140px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;color:#b8c2b5}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 9px;font:11px var(--mono);border:1px solid var(--line)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.gallery figure{margin:0;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer}
+.gallery img{width:100%;height:105px;object-fit:cover;display:block}
+.gallery figcaption{padding:6px 8px;font-size:12px}
+.big img{width:100%;border-radius:10px}
+.sat{position:relative;width:100%}
+.sat img{display:block;width:100%}
+.sat .ov,.sat canvas{position:absolute;inset:0;width:100%;height:100%}
+.sat .ov{pointer-events:none}
+.prompt{display:flex;gap:6px;margin:10px 0 6px}
+.prompt input,.mapbar input{flex:1;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:13px var(--mono)}
+/* картки задач — як у Trello */
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.col{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px;min-height:120px}
+.col .label{margin:2px 4px 8px}
+.card{background:var(--panel2);border:1px solid var(--line);border-top:3px solid var(--muted);border-radius:8px;padding:9px 10px;margin-bottom:8px}
+.card h4{margin:4px 0 6px;font:600 14px Inter}
+.card .kv{font:11px/1.7 var(--mono);color:var(--muted)}
+.card ul{margin:6px 0;padding-left:16px;font-size:12px;color:#c9cfc4}
+.card .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.empty{color:var(--muted);font-size:12px;padding:8px 4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:500 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+tr.click{cursor:pointer} tr.click:hover{background:var(--panel2)} tr.click.on{background:#2a160c}
+.zid{font:500 12px var(--mono);white-space:nowrap}
+.lvl{font:11px var(--mono);color:var(--muted)}
+.day{margin-bottom:12px}
+.day h5{margin:0 0 6px;font:500 12px var(--mono);color:var(--yellow)}
+.ptask{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center;font-size:12px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;margin-bottom:4px;cursor:pointer;background:var(--panel2)}
+.ptask.done{opacity:.45;text-decoration:line-through}
+.mapwrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.mapbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}
+.mapbar input{max-width:220px}
+.mapbar .hint{margin-left:auto}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px}
+.timebar{display:flex;gap:10px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.timebar[hidden]{display:none}
+/* спливаюче вікно ареалу */
+.modal{position:fixed;inset:0;background:rgba(5,8,6,.72);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.modal[hidden]{display:none}
+.mbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(1180px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden}
+.mhd{display:flex;gap:10px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.mhd h3{margin:0;font:800 18px var(--display)}
+.mbody{display:grid;grid-template-columns:3fr 2fr;min-height:0;flex:1}
+#amap{min-height:460px;height:100%;background:#1b1f1c}
+.mside{padding:14px 16px;overflow-y:auto;border-left:1px solid var(--line);font-size:13px}
+.mside h4{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px}
+.mside h4:first-child{margin-top:0}
+.kvs{display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.kvs span:nth-child(odd){color:var(--muted)}
+.strip{display:block;width:100%;height:auto}
+.obs{font:12px/1.6 var(--mono);color:#c9cfc4}
+.obs div{cursor:pointer;border-radius:4px;padding:0 4px} .obs div:hover{color:var(--text)} .obs div.on{background:#2a160c;color:var(--text)}
+.eg-leg{background:rgba(14,20,17,.92);color:#ece8dc;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:12px/1.5 Inter,sans-serif}
+.eg-leg b{display:block;font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:2px}
+.eg-leg i.pt{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.hist-only{display:none} .show-hist .hist-only{display:block}
+.srcleg{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;padding:8px 16px;border-top:1px solid var(--line)}
+@media (max-width:900px){.mbody{grid-template-columns:1fr}#amap{min-height:300px}.mside{border-left:0;border-top:1px solid var(--line)}}
+.feed{border-top:1px solid var(--line);display:flex;flex-direction:column;height:210px;flex:none}
+.feedhd{display:flex;gap:10px;align-items:center;padding:7px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.feedlist{overflow-y:auto;flex:1}
+.nt{display:grid;grid-template-columns:10px 110px 1fr auto;gap:10px;align-items:center;padding:7px 14px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+.nt:hover{background:var(--panel2)}
+.nt.on{background:#2a160c}
+.nt time{font:12px var(--mono);color:var(--muted)}
+.nt .src{font:11px var(--mono);color:var(--muted);text-align:right;white-space:nowrap}
+.nt .sim{color:var(--yellow)}
+.gallery figure.sel{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange)}
+.timebar input[type=range]{flex:1;accent-color:var(--orange)}
+.timebar .mono{font-size:13px;color:var(--orange);min-width:92px}
+iframe{display:block;width:100%;flex:1;min-height:0;border:0}
+a{color:var(--orange)}
+footer{padding:4px 24px 24px;color:var(--muted);font-size:11px}
+@media (max-width:1100px){main{flex:none}.view{grid-template-columns:1fr;height:auto}.side{flex-direction:row;flex-wrap:wrap}.win{max-height:none}.mapwrap{height:75vh}}
+@media (max-width:700px){header,main{padding-left:16px;padding-right:16px}.board{grid-template-columns:1fr}.mapbar input{max-width:none}h1{font-size:20px}}
+.rt-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.rt-kpi div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.rt-kpi b{display:block;font:600 17px var(--mono)}
+.rt-team{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;background:var(--panel2)}
+.rt-hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.rt-pin{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:var(--c);border:2px solid var(--t);font:800 12px Inter;color:#0e1411}
+.rt-stop{display:grid;grid-template-columns:28px 48px 1fr;gap:8px;align-items:start;padding:6px 4px;border-top:1px solid var(--line);font-size:13px;cursor:pointer}
+.rt-stop:hover{background:#1b241e}
+.rt-stop.done{opacity:.55}
+.rt-stop.new{background:#2a160c}
+.rt-stop.base{display:block;color:var(--muted);font:12px var(--mono);cursor:default}
+.rt-num{display:inline-block;min-width:22px;height:22px;border-radius:11px;color:#0e1411;font:700 11px/22px var(--mono);text-align:center;padding:0 3px}
+.reroute{border:1px solid var(--orange);background:#2a160c;border-radius:8px;padding:8px 10px;margin:6px 0;font-size:12px}
+.rt-pulse>div>div:first-child{animation:rtp 1.2s ease-in-out infinite}
+@keyframes rtp{0%,100%{box-shadow:0 0 0 0 #ff6b2c99}50%{box-shadow:0 0 0 9px #ff6b2c00}}
+.ttable{width:100%;border-collapse:collapse;font-size:13px}
+.ttable td,.ttable th{padding:8px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+.ttable tr.st-done td{opacity:.5}
+.ttable select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:6px;font:inherit;font-size:12px;padding:2px 4px}
+.ttag{display:inline-block;font:600 10.5px var(--mono);border-radius:5px;padding:1px 6px;border:1px solid currentColor;white-space:nowrap}
+#routeMap{flex:1;min-height:0}
+.mapwrap>[hidden],.side-it[hidden]{display:none!important}
+@media (max-width:700px){.rt-kpi{grid-template-columns:repeat(2,1fr)}.ttable{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <a class="pill" href="index.html" style="text-decoration:none" title="Головна сторінка"><i></i>Застосунок · ← головна</a>
+    <h1 id="parkTitle"></h1>
+  </div>
+</header>
+
+<main>
+  <!-- ВІКНО 1 · Екстрене реагування: камери, фотопастки, гаряча лінія / експерт — зараз -->
+  <div class="view" id="view-vision">
+  <aside class="side" aria-label="Розділи">
+    <div class="side-hd">Розділи</div>
+    <button class="side-it on" data-panel="p-monitor">Моніторинг парку</button>
+    <button class="side-it" data-panel="p-routes">Маршрути команд</button>
+    <button class="side-it" data-panel="p-tasks">Таски</button>
+    <button class="side-it" data-panel="p-analytics">Аналітика</button>
+    <button class="side-it" data-panel="p-chat">Чат з агентом</button>
+    <div class="side-hd" style="margin-top:14px">Парк</div>
+    <div class="park-sel" id="parkSel" role="radiogroup" aria-label="Парк"></div>
+  </aside>
+  <section class="win" id="p-monitor">
+    <div class="hd"><span class="label live">Моніторинг парку</span>
+      <div class="tabs" data-group="v">
+        <button data-tab="v-areals" class="on">Ареали</button>
+        <button data-tab="v-sat">Супутник</button>
+        <button data-tab="v-video">Камери</button>
+        <button data-tab="v-photo">Фотопастки</button>
+        <button data-tab="v-hot">Гаряча лінія</button>
+      </div>
+    </div>
+    <div class="body">
+      <div id="v-areals">
+        <p class="muted" style="margin:0 0 8px;font-size:12px" id="arealNote"></p>
+        <div class="row" id="decChips" style="margin-bottom:8px"></div>
+        <table><thead><tr><th>Ареал</th><th>Тип</th><th>Характеристики</th><th></th></tr></thead><tbody id="zoneBody"></tbody></table>
+      </div>
+      <div id="v-sat" hidden>
+        <p class="muted" style="margin:0 0 10px;font-size:12px">Супутникові знімки ділянок парку (Esri World Imagery, ~1 м/пкс); усі виявлення — всередині зони свого знімка. Клік по знімку — його зона пунктиром на мапі; клік по точці на великому знімку — мапа переходить у цю точку.</p>
+        <h4 class="label" style="margin:0 0 6px">Сповіщення з супутника · 14 днів</h4>
+        <div id="satEvents" style="margin-bottom:14px"></div>
+        <h4 class="label" style="margin:0 0 6px">Знімки</h4>
+        <div class="gallery" id="satGallery"></div>
+        <div class="big" id="satBig" hidden style="margin-top:12px"></div>
+      </div>
+      <div id="v-video" hidden>
+        <video id="vid" controls muted loop playsinline></video>
+        <div class="banner" id="fireBanner"></div>
+        <div class="row" style="margin-top:10px"><span class="label live">камера</span><span class="muted" id="vidTitle" style="flex:1"></span>
+          <button class="btn" id="vidMap">Камера на мапі</button></div>
+        <div class="an-card" style="margin:12px 0"><h3 style="margin:0 0 4px">Детекція в кадрі → клин на мапі</h3>
+          <div class="sub muted" style="font-size:12px;margin-bottom:8px">Положення рамки дає напрям. Відстань камера не знає, тому підсвічено весь клин, але лише гекси, які видно з вишки з урахуванням рельєфу.</div>
+          <div class="sub" style="font-size:12px;margin-bottom:6px"><i class="dot" style="background:#d95926"></i> клин диму · <i class="dot" style="background:#199e70"></i> клин людей · <i class="dot" style="background:#4f6a7d"></i> видно з вишки · <i class="dot" style="background:#2a3530"></i> закрито рельєфом</div>
+          <div id="camWedge" style="height:330px;border-radius:10px"></div><div id="camDets" class="muted" style="font-size:12px;margin-top:6px"></div></div>
+        <div class="row" id="vidCounts" style="margin-top:8px"></div>
+        <div class="log" id="vidLog"><span class="muted">Лог детекцій з'явиться під час відтворення…</span></div>
+        <h4 class="label" style="margin:14px 0 6px">Встановлені камери</h4>
+        <div id="camList"></div>
+      </div>
+      <div id="v-photo" hidden>
+        <p class="muted" style="margin:0 0 10px;font-size:12px">Кадри фотопасток: детекції людей і авто — YOLO-World. <span style="color:var(--yellow)" id="photoNote">Демо: реальні фото з парку (Wikimedia Commons) з оригінальною датою зйомки.</span></p>
+        <div id="trapList" style="margin-bottom:10px"></div>
+        <div class="gallery" id="gallery"></div>
+        <div class="big" id="photoBig" hidden style="margin-top:12px"></div>
+      </div>
+      <div id="v-hot" hidden>
+        <p class="muted" style="margin:0 0 10px;font-size:12px">Дзвінки на гарячу лінію та повідомлення експертів за 72 год. Клік — на мапі.</p>
+        <div id="hotList"></div>
+      </div>
+    </div>
+  </section>
+  <section class="win" id="p-routes" hidden>
+    <div class="hd"><span class="label">Маршрути команд</span></div>
+    <div class="body"><div id="routesBody"></div></div>
+  </section>
+  <section class="win" id="p-tasks" hidden>
+    <div class="hd"><span class="label">Таски</span><div class="row" id="taskChips"></div></div>
+    <div class="body"><div id="tasksBody"></div></div>
+  </section>
+  <section class="win" id="p-analytics" hidden>
+    <div class="hd"><span class="label">Аналітика · 90 днів</span></div>
+    <div class="body"><div id="anBody"></div></div>
+  </section>
+  <section class="win" id="p-chat" hidden>
+    <div class="hd"><span class="label">Чат з агентом</span><span class="label" id="chatPark">PandasAI · дані парку</span>
+      </div>
+    <div class="body chat-body" id="chatLog"></div>
+    <div class="chat-in">
+      <div class="keyrow">
+        <label class="keybox"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 21 2m-4 4 3 3m-6 0 2 2"/></svg>
+          <input id="chatKey" type="password" autocomplete="off" spellcheck="false" placeholder="ключ OpenAI або Anthropic для своїх питань — необов'язково" aria-label="Ключ OpenAI або Anthropic"></label>
+        <span id="chatMode" class="keystate">готові питання</span>
+      </div>
+      <div class="row" id="chatChips" style="margin-bottom:8px"></div>
+      <div class="prompt" style="margin:0"><input id="chatIn" placeholder="Оберіть готове питання вище" aria-label="Повідомлення агенту">
+        <button class="btn primary" id="chatGo">Надіслати</button></div>
+    </div>
+  </section>
+    <section class="mapwrap">
+      <div class="mapbar">
+        <span class="label">Мапа зараз</span>
+        <input class="coordIn" placeholder="lat, lon — 41.0690, 26.1904">
+        <button class="btn coordGo">Перейти</button>
+        <button class="btn homeGo">Весь парк</button>
+        <span class="hint label clickInfo">клік по мапі → координати</span>
+      </div>
+      <div class="timebar" id="timebar">
+        <button class="btn" id="tPlay" aria-label="Програти">▶</button>
+        <input type="range" id="tSlider" min="0" step="1" aria-label="Дата стану ареалів">
+        <span class="mono" id="tDate"></span>
+        <span class="label" id="tInfo"></span>
+      </div>
+      <div class="timebar" id="rtBar" hidden>
+        <span class="label">Маршрути</span>
+        <input type="range" id="rtSlider" min="0" step="1" aria-label="Дата маршрутів">
+        <span class="mono" id="rtDate"></span>
+        <span class="label" id="rtInfo"></span>
+      </div>
+      <iframe id="mapV" title="Мапа парку"></iframe>
+      <div id="routeMap" hidden></div>
+    </section>
+  </div>
+
+</main>
+<div class="modal" id="arealModal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="mhd"><h3 id="mTitle"></h3><span class="tag" id="mLife"></span><label class="muted" style="margin-left:auto;font-size:12px;cursor:pointer"><input type="checkbox" id="mHist"> Історія (старше 30 дн.)</label>
+      <span class="label" id="mDate"></span>
+      <button class="btn" id="mClose" aria-label="Закрити">✕</button></div>
+    <div class="mbody"><div id="amap"></div><div class="mside" id="mSide"></div></div>
+    <div class="srcleg" id="mLeg"></div>
+  </div>
+</div>
+<footer id="credits"></footer>
+
+<script>
+// Дані всіх парків; вибраний парк — ?park=<ключ> або останній вибраний, інакше основний. Перемикання перезавантажує сторінку.
+const ALL = /*__DATA__*/null;
+const SEL = (() => { let k = new URLSearchParams(location.search).get('park'); try { k = k || localStorage.getItem('eg.park'); } catch (e) {} return ALL.parks[k] ? k : ALL.main; })();
+const D = Object.assign({photos: ALL.photos, video: ALL.video}, ALL.parks[SEL]);
+try { localStorage.setItem('eg.park', SEL); } catch (e) {}
+document.getElementById('mapV').src = D.map + (window.I18N_LANG === 'en' ? '?lang=en' : '');
+document.getElementById('parkTitle').textContent = D.name;
+document.title = D.name + ' · застосунок';
+document.getElementById('chatPark').textContent = 'PandasAI · ' + D.short;
+document.getElementById('parkSel').innerHTML = ALL.order.map(k => `<button class="side-it park${k === SEL ? ' on' : ''}" role="radio" aria-checked="${k === SEL}" data-park="${k}">${ALL.parks[k].short}</button>`).join('');
+document.getElementById('parkSel').onclick = e => { const b = e.target.closest('[data-park]'); if (!b || b.dataset.park === SEL) return;
+  const u = new URL(location.href); u.searchParams.set('park', b.dataset.park); location.href = u.toString(); };
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TC = {fire:'var(--orange)', logging:'var(--yellow)', vehicle:'var(--green)'};
+const KIND_C = {fire:'#ff6b2c', smoke:'#9ca3af', vehicle:'#22d3ee', person:'#e5c13a'};
+const store = {get(k, d){ try { return JSON.parse(localStorage.getItem(k)) ?? d } catch(e) { return d } }, set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)) } catch(e) {} }};
+
+const fmtN = n => Number(n || 0).toLocaleString('uk-UA');
+function openModal(id){ $(id).hidden = false; } function closeModals(){}
+let VIEW = 'vision';
+const mapEl = () => $('#mapV');
+function fly(lat, lon, zoom, label){ mapEl().contentWindow.postMessage({type:'fly', lat, lon, zoom, label}, '*'); }
+function setView(){ VIEW = 'vision'; }      // одне вікно
+
+document.querySelectorAll('.tabs[data-group]').forEach(g => g.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  g.querySelectorAll('button').forEach(x => { x.classList.toggle('on', x === b); document.getElementById(x.dataset.tab).hidden = x !== b; });
+}));
+
+// ---------- сайдбар: перемикає ліву панель (мапа спільна)
+document.querySelectorAll('.side-it[data-panel]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.side-it[data-panel]').forEach(x => x.classList.toggle('on', x === b));
+  ['p-monitor', 'p-routes', 'p-tasks', 'p-analytics', 'p-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.hidden = id !== b.dataset.panel; });
+  document.getElementById('view-vision').classList.toggle('wide', ['p-analytics', 'p-tasks'].includes(b.dataset.panel));
+  if (typeof routeMode === 'function') routeMode(b.dataset.panel === 'p-routes');      // своя мапа маршрутів: шари моніторингу сховані
+  if (b.dataset.panel === 'p-analytics') renderAnalytics();
+  const mode = {'p-chat': 'chat'}[b.dataset.panel] || 'monitor';
+  $('#mapV').contentWindow.postMessage({type: 'mode', mode}, '*');
+  [60, 400].forEach(t => setTimeout(() => $('#mapV').contentWindow.postMessage({type: 'resize'}, '*'), t));   // мапа могла завантажитись схованою
+  $('#timebar').hidden = mode === 'chat' || b.dataset.panel === 'p-routes';   // у чаті мапа порожня, у маршрутах свій повзунок
+  store.set('eg.panel', b.dataset.panel);
+});
+{ const saved = store.get('eg.panel', 'p-monitor'); const b = document.querySelector(`.side-it[data-panel="${saved}"]`); if (b && saved !== 'p-monitor') setTimeout(() => b.click(), 0); }
+
+// ---------- маршрути команд і таски (лише коли дослідження має гілку RD: data/processed/routes.json, tasks.json). Симуляція.
+const XR = D.extra.routes, XT = D.extra.tasks;
+if (!XR) document.querySelectorAll('[data-panel="p-routes"],[data-panel="p-tasks"]').forEach(b => b.hidden = true);
+const KC_ROUTE = {fire: '#ff6b2c', logging: '#e5c13a', vehicle: '#7fbf5f', patrol: '#a78bfa'};
+const pinSym = x => x.status === 'done' ? '✓' : x.type === 'plan' ? (x.one ? '◆' : '⟳') : x.type === 'patrol' ? '◎' : '!';
+const stopTag = x => x.status === 'new' ? 'НОВА подія' : x.type === 'plan' ? (x.one ? 'одинична дія' : 'дії ареалу') : x.type === 'night' ? 'нічний сигнал' : x.type === 'patrol' ? 'патруль ризику' : 'реагування';
+const RT_DAYS = XR ? XR.timeline.concat([XR.today]) : [];
+let RT = XR ? XR.today : {teams: []}, rtMap = null, rtLayer = null;
+function renderRoutes(i){
+  if (!XR) return;
+  RT = RT_DAYS[i == null ? RT_DAYS.length - 1 : i];
+  const nightTxt = `${XR.shift[1]}–${XR.shift[0]}`.replace(/^16:00–08:00$/, '18:00–08:00');
+  $('#routesBody').innerHTML = `
+  <div class="rt-kpi"><div><b>${RT.coverage.people}</b><span class="label">лісників</span></div><div><b>${RT.coverage.groups}</b><span class="label">групи · ${RT.shift}</span></div>
+    <div><b>${fmtN(RT.coverage.area_km2)} км²</b><span class="label">площа парку</span></div><div><b>${RT.coverage.done} з ${RT.coverage.total}</b><span class="label">${RT.past ? 'виконано' : 'задач встигають'}</span></div></div>
+  <p class="muted" style="font-size:12px;margin:8px 0 12px"><span class="tag" style="color:var(--yellow)">симуляція</span> ${RT.past ? `<b style="color:var(--orange)">Виконано ${RT.date}</b>: маршрути, виїзди й реакції того дня.` : `План на ${RT.date}.`}
+    Спершу події, нічні сигнали й дії ареалів, у вільний час — патрулі зон ризику рубок (прогноз LG). Час — лісовими дорогами OSM. Вночі патрулів немає: працюють камери й гаряча лінія, зафіксоване йде в ранковий маршрут.
+    Розв'язувач — лідер гілки RD (${esc(RT.solver)}). Події — сценарний потік на реальних місцях парку.</p>
+  ${RT.teams.map(tm => `<div class="rt-team"><div class="rt-hd"><i class="dot" style="background:${tm.color}"></i><b>${esc(tm.name)}</b>
+      <span class="muted mono" style="margin-left:auto;font-size:12px">${tm.people} особи · ${tm.km} км · повернення ${tm.end}</span></div>
+    ${tm.rerouted ? `<div class="reroute">⟲ <b>Маршрут перегенеровано о ${tm.at}</b><br>${esc(tm.reason)}<br><span class="muted">${tm.old_rest.length} точок старого плану скасовано — новий маршрут від поточного місця групи</span></div>` : ''}
+    <div class="rt-stop base">${RT.shift.slice(0, 5)} <b>⌂</b> ${esc(tm.base_name)}</div>
+    ${tm.stops.map((x, i) => `<div class="rt-stop ${x.status}" data-rt="${tm.id}:${i}"><span class="rt-pin" style="--c:${KC_ROUTE[x.kind] || '#8f9a8f'};--t:${tm.color}">${pinSym(x)}</span>
+      <span class="mono">${x.eta}</span><span><b>${esc(x.title)}</b> <span class="tag">${stopTag(x)}</span>${x.status === 'done' ? ' <span class="muted">· пройдено ✓</span>' : ''}
+      <br><span class="muted" style="font-size:12px">${esc(x.detail || '')}</span>${x.post ? `<br><span style="font-size:12px">після підтвердження: ${x.post.map(esc).join(', ')}</span>` : ''}</span></div>`).join('')}
+    <div class="rt-stop base">${tm.end} <b>⌂</b> повернення: ${esc(tm.base_name)}</div></div>`).join('')}
+  <h4 class="label" style="margin:16px 0 6px">Передано партнерам</h4>
+  ${RT.handoff.map(h => `<div class="rt-stop" data-ll="${h.lat},${h.lon}"><span class="rt-num" style="background:var(--orange)">199</span><span class="mono">${h.when.slice(5)}</span>
+    <span><b>${esc(h.to)}</b> · ${esc(h.title)}${h.drone ? `<br><span style="color:var(--orange);font-size:12px">→ ${esc(h.drone)}</span>` : ''}</span></div>`).join('') || '<div class="empty">немає</div>'}
+  <h4 class="label" style="margin:16px 0 6px">Не вміщається в зміну — на завтра</h4>
+  ${RT.deferred.map(d => `<div class="rt-stop" data-ll="${d.lat},${d.lon}"><span class="mono">—</span><span class="mono"></span><span>${esc(d.title)} · <span class="muted">${esc(d.detail || '')}</span></span></div>`).join('') || '<div class="empty">усе вміщається ✓</div>'}
+  <h4 class="label" style="margin:16px 0 6px">Ніч 18:00–08:00 · патрулів немає</h4>
+  ${RT.night.map(n => `<div class="rt-stop" data-ll="${n.lat},${n.lon}"><span class="mono">${n.ts.slice(11)}</span><span class="mono" style="font-size:11px">${esc(n.source.split(' ')[0])}</span>
+    <span>${esc(n.text)}<br><b style="color:${n.action === 'call' ? 'var(--orange)' : n.action === 'go' ? 'var(--yellow)' : 'var(--muted)'}">→ ${esc(n.action_text)}</b></span></div>`).join('') || '<div class="empty">тихо</div>'}`;
+  drawRoutes();
+}
+function routeMapInit(){
+  if (rtMap || !XR) return;
+  rtMap = L.map('routeMap', {zoomSnap: .5, preferCanvas: false});
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {maxZoom: 16, attribution: 'Esri · OSM'}).addTo(rtMap);
+  (D.extra.park || []).forEach(p => L.polyline(p, {color: '#c9d1c9', weight: 1.2, dashArray: '5 4', interactive: false}).addTo(rtMap));
+  rtLayer = L.layerGroup().addTo(rtMap);
+  const leg = L.control({position: 'bottomleft'});
+  leg.onAdd = () => { const d = L.DomUtil.create('div'); d.style.cssText = 'background:#141c17e6;border:1px solid #26332b;border-radius:8px;padding:6px 9px;font:11px Inter;color:#ece8dc;line-height:1.6';
+    d.innerHTML = `${XR.teams.map(t => `<span style="color:${t.color}">━</span> ${esc(t.name)}`).join('<br>')}<br>┅ план · ━ пройдено · <span style="opacity:.45">┅ скасовано</span><br>! реагування · ⟳ дія ареалу · ◆ одинична · ◎ патруль · ✓ пройдено<br>⌂ база · ☎ 199 · 🚙 виїзд · ☾ зранку`; return d; };
+  leg.addTo(rtMap);
+}
+function drawRoutes(){
+  if (!rtMap) return;
+  rtLayer.clearLayers();
+  const pts = [], groups = new Map();
+  RT.teams.forEach(tm => {
+    const done = x => RT.past || x.status === 'done';
+    tm.stops.forEach((x, i) => { const st = {color: tm.color, weight: 3.2, opacity: .95, dashArray: done(x) ? null : '7 6'};
+      L.polyline(x.path, st).addTo(rtLayer); pts.push(...x.path);
+      const key = `${tm.id}|${x.lat.toFixed(4)},${x.lon.toFixed(4)}`;
+      if (!groups.has(key)) groups.set(key, {tm, xs: [], nums: []}); const g = groups.get(key); g.xs.push(x); g.nums.push(i + 1); });
+    L.polyline(tm.path_home, {color: tm.color, weight: 3.2, opacity: .95, dashArray: RT.past ? null : '7 6'}).addTo(rtLayer);
+    if (tm.rerouted) { const old = tm.old_rest.map(o => [o.lat, o.lon]);
+      if (old.length) L.polyline(old, {color: tm.color, weight: 2, opacity: .3, dashArray: '3 6', interactive: false}).addTo(rtLayer);
+      tm.old_rest.forEach(o => L.circleMarker([o.lat, o.lon], {radius: 5, color: tm.color, opacity: .35, fillOpacity: .15, weight: 1}).bindTooltip('скасовано: ' + esc(o.title)).addTo(rtLayer)); }
+    L.marker([tm.base.lat, tm.base.lon], {icon: L.divIcon({className: '', iconSize: [26, 26], iconAnchor: [13, 13], html: `<div style="width:26px;height:26px;border-radius:7px;background:${tm.color};color:#0e1411;font:800 15px/26px Inter;text-align:center;box-shadow:0 0 0 2px #0e1411">⌂</div>`})})
+      .bindTooltip(`База ${esc(tm.base_name)}`).addTo(rtLayer);
+    pts.push([tm.base.lat, tm.base.lon]);
+  });
+  groups.forEach(({tm, xs, nums}) => { const x = xs[0], c = KC_ROUTE[x.kind] || '#8f9a8f', faint = xs.every(y => y.status === 'done') && !RT.past ? .55 : 1, isNew = xs.some(y => y.status === 'new');
+    const ic = L.divIcon({className: isNew ? 'rt-pulse' : '', iconSize: [34, 34], iconAnchor: [17, 30], html: `<div style="opacity:${faint};display:flex;flex-direction:column;align-items:center">
+      <div style="min-width:24px;height:24px;padding:0 4px;border-radius:12px 12px 12px 2px;background:${c};border:2px solid ${tm.color};color:#0e1411;font:800 12px/20px Inter;text-align:center">${pinSym(x)}</div>
+      <div style="font:700 10px Inter;color:#fff;text-shadow:0 0 3px #000">${nums.join('·')}</div></div>`});
+    L.marker([x.lat, x.lon], {icon: ic}).bindTooltip(xs.map(y => `<b>${tm.id} · ${y.eta}</b> ${esc(y.title)}`).join('<br>')).on('click', () => { if (x.areal) openAreal(x.areal); }).addTo(rtLayer); });
+  RT.night.forEach(n => L.marker([n.lat, n.lon], {icon: L.divIcon({className: '', iconSize: [40, 18], iconAnchor: [20, 9], html: `<div style="background:#141c17e6;border:1px solid #c084fc;border-radius:9px;color:#ece8dc;font:600 10px/16px Inter;text-align:center;white-space:nowrap;padding:0 4px">${n.action === 'call' ? '☎ 199' : n.action === 'go' ? '🚙 виїзд' : '☾ зранку'}</div>`})})
+    .bindTooltip(`${n.ts} · ${esc(n.text)}<br>→ ${esc(n.action_text)}`).addTo(rtLayer));
+  RT.handoff.forEach(h => L.marker([h.lat, h.lon], {icon: L.divIcon({className: '', iconSize: [30, 18], iconAnchor: [15, 9], html: `<div style="background:#ff6b2c;border-radius:9px;color:#0e1411;font:800 10px/18px Inter;text-align:center">199</div>`})})
+    .bindTooltip(`${esc(h.to)} · ${esc(h.title)}`).addTo(rtLayer));
+  if (pts.length) rtMap.fitBounds(L.latLngBounds(pts), {padding: [30, 30]});
+}
+function routeMode(on){
+  $('#mapV').hidden = on; $('#timebar').hidden = on || $('#timebar').hidden; $('#routeMap').hidden = !on; $('#rtBar').hidden = !on;
+  document.querySelector('.mapbar').hidden = on;
+  if (on) { routeMapInit(); setTimeout(() => { rtMap.invalidateSize(); drawRoutes(); }, 60); }
+}
+if (XR) {
+  $('#rtSlider').max = RT_DAYS.length - 1; $('#rtSlider').value = RT_DAYS.length - 1;
+  const lab = () => { const r = RT_DAYS[+$('#rtSlider').value]; $('#rtDate').textContent = r.date; $('#rtInfo').textContent = r.past ? 'виконано' : 'план на сьогодні'; };
+  $('#rtSlider').oninput = () => { lab(); renderRoutes(+$('#rtSlider').value); };
+  lab(); renderRoutes();
+  $('#routesBody').onclick = e => {
+    const r = e.target.closest('[data-rt]'), h = e.target.closest('[data-ll]');
+    if (r && rtMap) { const [tid, i] = r.dataset.rt.split(':'), x = RT.teams.find(t => t.id === tid).stops[+i]; rtMap.flyTo([x.lat, x.lon], 15); }
+    if (h && rtMap) { const [la, lo] = h.dataset.ll.split(',').map(Number); rtMap.flyTo([la, lo], 14); }
+  };
+}
+// ---------- таски: усе в одній таблиці; статус у демо — до перезавантаження сторінки, вибір фільтрів запам'ятовується
+const T_KIND = {event: ['Реагування', 'var(--orange)'], system: ['Дії ареалу', 'var(--green)'], plan: ['Дії ареалу сьогодні', 'var(--green)'], one: ['Одинична', 'var(--yellow)'], night: ['Нічний сигнал', '#c084fc'],
+                night_alert: ['Нічний алерт', '#c084fc'], handoff: ['Партнерам', '#f472b6'], patrol: ['Патруль ризику', '#a78bfa']};
+const TASKS = XT ? XT.tasks : [], TST = {}, TSTAT = {new: 'нова', work: 'в роботі', done: 'виконано'};
+let tFilter = store.get('eg.tfilter', Object.keys(T_KIND));
+function renderTasks(){
+  if (!XT) return;
+  const kinds = Object.keys(T_KIND).filter(k => TASKS.some(t => t.type === k));
+  $('#taskChips').innerHTML = kinds.map(k => `<button class="chip ${tFilter.includes(k) ? 'on' : ''}" data-tk="${k}"><i class="dot" style="background:${T_KIND[k][1]}"></i> ${T_KIND[k][0]} · ${TASKS.filter(t => t.type === k).length}</button>`).join('');
+  const items = TASKS.filter(t => tFilter.includes(t.type)).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  const st = t => TST[t.id] || t.status;
+  $('#tasksBody').innerHTML = `<p class="muted" style="margin:0 0 10px;font-size:12px"><span class="tag" style="color:var(--yellow)">симуляція</span> ${items.length} задач: сьогоднішні виїзди з маршруту, дії ареалів за їхнім ритмом на 14 днів, одиничні дії, нічні алерти, передачі партнерам, патрулі ризику. Демо: статус діє до перезавантаження сторінки.</p>
+    <table class="ttable"><thead><tr><th>Дата</th><th>Час</th><th>Тип</th><th>Задача</th><th>Ареал</th><th>Група</th><th>Статус</th></tr></thead><tbody>` +
+    items.map(t => `<tr class="st-${st(t) === 'done' ? 'done' : 'open'}"><td class="mono">${t.date.slice(5)}</td><td class="mono">${t.time || '—'}</td>
+      <td><span class="ttag" style="color:${(T_KIND[t.type] || ['', '#8f9a8f'])[1]}">${(T_KIND[t.type] || [t.type_ua])[0]}</span></td>
+      <td><b>${esc(t.title)}</b>${t.detail ? `<br><span class="muted" style="font-size:12px">${esc(t.detail)}</span>` : ''}</td>
+      <td>${t.areal ? `<button class="btn" data-detail="${esc(t.areal)}">${esc(t.areal)}</button>` : '—'}</td><td class="mono">${esc(t.team)}</td>
+      <td><select data-tst="${t.id}" aria-label="Статус ${t.id}">${Object.entries(TSTAT).map(([k, l]) => `<option value="${k}" ${k === st(t) ? 'selected' : ''}>${l}</option>`).join('')}</select></td></tr>`).join('') + '</tbody></table>';
+}
+if (XT) {
+  $('#taskChips').onclick = e => { const b = e.target.closest('[data-tk]'); if (!b) return; const k = b.dataset.tk;
+    tFilter = tFilter.includes(k) ? tFilter.filter(x => x !== k) : [...tFilter, k]; store.set('eg.tfilter', tFilter); renderTasks(); };
+  $('#tasksBody').onchange = e => { const sel = e.target.closest('[data-tst]'); if (!sel) return; TST[sel.dataset.tst] = sel.value; renderTasks(); };
+  $('#tasksBody').onclick = e => { const d = e.target.closest('[data-detail]'); if (d) openAreal(d.dataset.detail); };
+  renderTasks();
+}
+
+// ---------- KPI
+const K = D.kpi;
+const LIVE72 = D.ops.feed.filter(n => n.live && (new Date(D.ops.now) - new Date(n.ts)) / 36e5 <= D.ops.fresh_days * 24);
+
+// ---------- відеострім
+const V = D.video, vid = $('#vid');
+vid.src = V.video; $('#vidTitle').textContent = V.title;
+$('#vidMap').onclick = () => fly(V.cam_lat, V.cam_lon, 14, esc(V.title));
+if (!D.main) {                                         // відео й фото детекторів зняті не в цьому парку: показуємо як приклад
+  $('#vidTitle').textContent = 'Приклад роботи детектора на записі з іншого місця. Камери з відео в цьому парку поки немає.';
+  $('#vidMap').hidden = true; $('#camWedge').closest('.an-card').hidden = true;
+  $('#photoNote').textContent = 'Приклад детектора: фото не з цього парку (Wikimedia Commons).';
+}
+$('#vidCounts').innerHTML = Object.entries(V.counts).map(([k, n]) => `<span class="tag"><i class="dot" style="background:${KIND_C[k]}"></i>${k}: ${n}</span>`).join('') || '<span class="muted" style="font-size:12px">детекції YOLO ще не обчислені</span>';
+let lastFrame = -1;
+vid.addEventListener('timeupdate', () => {
+  if (!V.frames.length) return;
+  const i = Math.min(V.frames.length - 1, Math.floor(vid.currentTime * V.fps_out));
+  if (i === lastFrame || i < 0) return; lastFrame = i;
+  const f = V.frames[i], fire = f.detections.filter(d => d.kind === 'fire' || d.kind === 'smoke');
+  const b = $('#fireBanner'); b.style.display = fire.length ? 'block' : 'none';
+  if (fire.length) b.innerHTML = `<span class="label">алерт · пожежа</span><br>${f.ts} — ${fire.map(d => d.label + ' ' + d.conf.toFixed(2)).join(', ')} → картка «Виїзд групи реагування»`;
+  const log = $('#vidLog'); if (i === 0) log.innerHTML = '';
+  log.insertAdjacentHTML('afterbegin', `<div>${esc(f.ts.slice(11))}  ${f.detections.length ? esc(f.detections.map(d => d.label + ':' + d.conf.toFixed(2)).join('  ')) : '—'}</div>`);
+  while (log.children.length > 60) log.lastChild.remove();
+});
+
+// ---------- фото
+$('#gallery').innerHTML = D.photos.map((p, i) => `<figure data-i="${i}"><img src="${p.img}" alt="${esc(p.title)}" loading="lazy">
+  <figcaption>${esc(p.title)}<br><span class="muted">${Object.entries(p.counts).map(([k, n]) => k + ': ' + n).join(', ') || 'без детекцій'}</span></figcaption></figure>`).join('');
+$('#gallery').onclick = e => {
+  const f = e.target.closest('figure'); if (!f) return; const p = D.photos[f.dataset.i], el = $('#photoBig'); el.hidden = false;
+  el.innerHTML = `<img src="${p.img}" alt="${esc(p.title)}"><div class="row" style="margin-top:8px"><b>${esc(p.title)}</b>
+    <span class="muted mono" style="font-size:12px">${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}${p.approx ? ' (≈)' : ''} · ${p.date || 'дата невідома'}</span>
+    <button class="btn" id="phMap">На мапі</button></div>
+    <div class="row" style="margin-top:6px">${p.detections.map(d => `<span class="tag"><i class="dot" style="background:${KIND_C[d.kind]}"></i>${d.label} ${d.conf.toFixed(2)}</span>`).join('')}</div>
+    <div class="muted" style="font-size:11px;margin-top:6px">Фото: ${esc(p.author)}, ${p.license}, <a href="${p.url}" target="_blank" rel="noopener">Wikimedia Commons</a></div>`;
+  $('#phMap').onclick = () => fly(p.lat, p.lon, 16, esc(p.title));
+};
+
+const ago = ts => { const h = Math.round((new Date(D.ops.now) - new Date(ts)) / 36e5); return h < 1 ? 'щойно' : h < 24 ? h + ' год тому' : Math.round(h / 24) + ' дн. тому'; };
+// ---------- супутник (вікно 1): список знімків → зона пунктиром на мапі; клік по знімку → точка на мапі
+const SAT = D.ops.sat_scenes, SCN = Object.fromEntries(SAT.map((S, i) => [S.id, i]));
+let satSel = null;
+$('#satGallery').innerHTML = SAT.map((S, i) => `<figure data-s="${i}"><img src="${S.img}" alt="${esc(S.title)}" loading="lazy">
+  <figcaption>ЗН-${i + 1} · ${esc(S.title)}<br><span class="muted mono">${S.bounds[0][0].toFixed(3)}, ${S.bounds[0][1].toFixed(3)}</span></figcaption></figure>`).join('');
+// сповіщення: поява / розширення / нова ділянка / повтор; клік — контур пунктиром на мапі
+const SAT_EV = D.ops.feed.filter(n => n.source === 'супутник' && (new Date(D.ops.now) - new Date(n.ts)) / 864e5 <= 14);
+const SAT_EV_C = {new: 'var(--orange)', grow: 'var(--orange)', spot: 'var(--yellow)', again: 'var(--muted)'};
+$('#satEvents').innerHTML = SAT_EV.map(n => { const k = SAT_EV.indexOf(n), fresh = (new Date(D.ops.now) - new Date(n.ts)) / 36e5 <= 72;
+  return `<div class="nt" data-satev="${k}" style="grid-template-columns:10px 56px 1fr auto"><i class="dot" style="background:${TC[n.kind]}"></i>
+    <b class="mono" style="font-size:11px">ЗН-${SCN[n.scene] + 1}</b><span style="color:${n.sat_event === 'again' ? 'var(--muted)' : 'var(--text)'}">${esc(n.text)}${n.area_ha ? ` <span class="muted mono" style="font-size:11px">· контур ${n.area_ha} га</span>` : ''}</span>
+    <span class="src">${fresh ? '<b style="color:var(--orange)">' + ago(n.ts) + '</b>' : ago(n.ts)}${n.simulated ? ' <span class="sim">сим.</span>' : ''}</span></div>`; }).join('') || '<div class="empty">подій немає</div>';
+function clearSatSel(){ document.querySelectorAll('#satEvents .nt.on, #satGallery figure.sel').forEach(x => x.classList.remove('on', 'sel')); $('#satBig').hidden = true; satSel = null; }
+function sceneOff(){ clearSatSel(); $('#mapV').contentWindow.postMessage({type: 'scene'}, '*'); $('#mapV').contentWindow.postMessage({type: 'overlay'}, '*'); }
+window.addEventListener('message', e => { if (e.data && e.data.type === 'scene-cleared') { clearSatSel(); document.querySelectorAll('#view-vision .nt.on').forEach(x => x.classList.remove('on')); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#arealModal').hidden) sceneOff(); });
+$('#satEvents').onclick = e => { const r = e.target.closest('[data-satev]'); if (!r) return; const n = SAT_EV[r.dataset.satev];
+  if (r.classList.contains('on')) return sceneOff();                        // повторний клік — зняти вибір
+  clearSatSel(); r.classList.add('on');
+  $('#mapV').contentWindow.postMessage({type: 'scene', poly: n.poly, lat: n.lat, lon: n.lon, bounds: SAT[SCN[n.scene]].bounds,
+    title: `ЗН-${SCN[n.scene] + 1} · ${n.text} · ${n.ts.slice(5)}`}, '*'); };
+$('#satGallery').onclick = e => {
+  const f = e.target.closest('figure'); if (!f) return; const i = +f.dataset.s, S = SAT[i];
+  if (f.classList.contains('sel')) return sceneOff();                       // повторний клік — зняти вибір
+  clearSatSel(); f.classList.add('sel');
+  satSel = i; const el = $('#satBig'); el.hidden = false;
+  el.innerHTML = `<div style="position:relative"><img id="satBigImg" src="${S.img}" alt="${esc(S.title)}" style="cursor:crosshair;display:block;width:100%"><i id="satPin" hidden></i></div>
+    <div class="row" style="margin-top:8px"><b>${esc(S.title)}</b><span class="muted" style="font-size:12px">клік по знімку — ця точка на мапі · повторний клік у списку, клік по мапі або Esc — зняти вибір</span></div>
+    <div class="muted" style="font-size:11px;margin-top:4px">Знімок: Esri World Imagery (дата зйомки не вказана провайдером)</div>`;
+  $('#mapV').contentWindow.postMessage({type: 'scene', bounds: S.bounds, title: S.title}, '*');
+  $('#mapV').contentWindow.postMessage({type: 'overlay', url: S.img, bounds: S.bounds}, '*');   // той самий знімок на мапі: точка кліку збігається
+};
+$('#satBig').onclick = e => {
+  if (e.target.id !== 'satBigImg' || satSel === null) return;
+  const S = SAT[satSel], r = e.target.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+  const [[s_, w], [n, ea]] = S.bounds, my = y => Math.log(Math.tan(Math.PI / 4 + y * Math.PI / 360));   // знімок у Web Mercator
+  const lat = (2 * Math.atan(Math.exp(my(n) - fy * (my(n) - my(s_)))) - Math.PI / 2) * 180 / Math.PI, lon = w + fx * (ea - w);
+  const pin = $('#satPin'); pin.hidden = false; pin.style.left = fx * 100 + '%'; pin.style.top = fy * 100 + '%';   // та сама точка на знімку
+  fly(lat, lon, 16, `${lat.toFixed(5)}, ${lon.toFixed(5)}<br>${esc(S.title)}`);
+};
+
+// ---------- вікно 1: камери, фотопастки, гаряча лінія, живі сповіщення
+const DEV = D.ops.devices, SRC_LIVE_C = {'камера': '#2dd4bf', 'фотопастка': '#e2e8f0', 'гаряча лінія / експерт': '#f472b6'};
+const lastBy = id => D.ops.feed.find(n => n.device === id);
+function devRow(d){
+  const n = lastBy(d.id), fresh = n && LIVE72.includes(n);
+  return `<div class="nt" data-dev="${d.id}" style="grid-template-columns:10px 80px 1fr auto"><i class="dot" style="background:${d.source === 'camera' ? '#2dd4bf' : '#e2e8f0'}"></i>
+    <b class="mono">${d.id}</b><span>${n ? esc(n.text) : '<span class="muted">подій немає</span>'}${d.video ? ' <span class="tag">відеострім</span>' : ''}</span>
+    <span class="src">${n ? (fresh ? '<b style="color:var(--orange)">' + ago(n.ts) + '</b>' : ago(n.ts)) : ''}</span></div>`;
+}
+$('#camList').innerHTML = DEV.filter(d => d.source === 'camera').map(devRow).join('');
+$('#trapList').innerHTML = '<h4 class="label" style="margin:0 0 6px">Встановлені фотопастки</h4>' + DEV.filter(d => d.source === 'trap').map(devRow).join('');
+// елемент зі списку ліворуч → на мапі пунктиром кольору типу (повторний клік / клік по мапі / Esc — зняти)
+function focusOn(row, n, title){
+  if (row.classList.contains('on')) { row.classList.remove('on'); $('#mapV').contentWindow.postMessage({type: 'scene'}, '*'); return; }
+  document.querySelectorAll('#view-vision .nt.on').forEach(x => x.classList.remove('on')); row.classList.add('on');
+  $('#mapV').contentWindow.postMessage({type: 'focus', lat: n.lat, lon: n.lon, kind: n.kind, title}, '*');
+}
+document.addEventListener('click', e => { const r = e.target.closest('[data-dev]'); if (!r) return; const d = DEV.find(x => x.id === r.dataset.dev), n = lastBy(d.id);
+  if (n) focusOn(r, n, `${d.id} · ${n.text} · ${n.ts.slice(5)}`); else fly(d.lat, d.lon, 15, `<b>${d.id}</b>`); });
+const HOT = LIVE72.filter(n => n.source === 'гаряча лінія / експерт');
+$('#hotList').innerHTML = HOT.map(n => `<div class="nt" data-live="${D.ops.feed.indexOf(n)}"><i class="dot" style="background:${TC[n.kind]}"></i>
+  <time>${n.ts.slice(5)}</time><span>${esc(n.text)} <span class="muted mono" style="font-size:11px">· ${n.lat}, ${n.lon}</span></span><span class="src">${ago(n.ts)}</span></div>`).join('') || '<div class="empty">звернень немає</div>';
+document.addEventListener('click', e => { const r = e.target.closest('[data-live]'); if (!r) return; const n = D.ops.feed[r.dataset.live];
+  focusOn(r, n, `${n.text} · ${n.ts.slice(5)}`); });
+// кліки з мапи вікна 1: тривога → картка, пристрій → його вкладка
+function showTab(group, tab){ const b = document.querySelector(`.tabs[data-group="${group}"] [data-tab="${tab}"]`); if (b) b.click(); }
+window.addEventListener('message', e => {
+  if (!e.data) return;
+  if (e.data.type === 'device') { const d = DEV.find(x => x.id === e.data.id); showTab('v', d.source === 'camera' ? 'v-video' : 'v-photo');
+    const r = document.querySelector(`[data-dev="${d.id}"]`); if (r) { r.classList.add('on'); r.scrollIntoView({block: 'nearest'}); }
+    if (d.video) vid.play().catch(() => {}); }
+});
+
+
+// ---------- журнал ареалу: події (дні з живими джерелами) і виконані дії (сценарно: постекстрені — наступного дня, системні — за ритмом)
+// виїзди груп в ареал до дати date — з маршрутів на кожну дату (той самий розрахунок, що в «Маршрутах команд»)
+function visitsOf(id, date){
+  const all = D.ops.routes_tl.concat([D.ops.routes]), out = [];
+  all.forEach(R => R.teams.forEach(tm => tm.stops.forEach(x => {
+    if (x.areal !== id) return;
+    const planned = !R.past;
+    if (R.date > date && !planned) return;
+    if (planned && R.date <= date) return;
+    out.push({date: R.date, team: tm.name, tid: tm.id, color: tm.color, planned, ...x});
+  })));
+  return out.sort((p, q) => (q.date + q.eta).localeCompare(p.date + p.eta));
+}
+// журнал: події (дні з живими джерелами) + виїзди груп (що зроблено) + одиничні дії з датою
+function journalHTML(a, obsAll, date, visits){
+  const rows = [], byDay = {};
+  obsAll.filter(n => n.live).forEach(n => { (byDay[n.ts.slice(0, 10)] = byDay[n.ts.slice(0, 10)] || []).push(n); });
+  Object.entries(byDay).forEach(([d, ns]) => rows.push({d, t: '', kind: 'ev',
+    html: `<b>Подія</b> · ${[...new Set(ns.map(n => n.source))].map(esc).join(' + ')}`}));
+  visits.forEach(v => {
+    const what = v.type === 'event' || v.type === 'night'
+      ? `виїзд на подію${v.post ? ' → ' + v.post.map(esc).join(', ') : ''}`
+      : (v.actions || []).map((x, i) => esc(x) + (v.cats && v.cats[i] === 'одинична' ? ' ◆' : '')).join(', ');
+    rows.push({d: v.date, t: v.eta, kind: v.planned ? 'plan' : 'team', color: v.color,
+      html: `<span class="tchip" style="background:${v.color}">${v.tid}</span> ${what}${v.status === 'new' ? ' <b style="color:var(--orange)">· після перегенерації</b>' : ''}`});
+  });
+  (a.one_time || []).filter(o => o.status === 'done').forEach(o => rows.push({d: o.date, t: '', kind: 'one', html: `одинична: ${esc(o.action)}`}));
+  rows.sort((x, y) => (y.d + y.t).localeCompare(x.d + x.t));
+  const ic = {ev: '<span style="color:var(--orange)">●</span>', team: '<span style="color:var(--green)">✓</span>', plan: '<span class="muted">◷</span>', one: '<span style="color:var(--green)">✓ ◆</span>'};
+  return rows.slice(0, 20).map(r => `<div class="jr ${r.kind}"><span class="mono">${r.d.slice(5)}${r.t ? '<br>' + r.t : ''}</span>${ic[r.kind]}<span>${r.kind === 'plan' ? '<span class="muted">заплановано · </span>' : ''}${r.html}</span></div>`).join('')
+    || '<span class="muted">записів немає</span>';
+}
+
+// ---------- 02 · Суперареали
+let A = D.ops.areals; const LIFE = ['активний', 'новий', 'відновився', 'згас'];
+let lifeF = store.get('eg.life', LIFE);
+const arealNote = () => `Сигнали з 5 джерел (супутник, камера, фотопастка, соцмережі, гаряча лінія / експерт) за ${D.ops.window_days} днів → <b>${D.ops.clusters} кластерів</b> (DBSCAN по типу й дню: де подія і хто її підтвердив) → <b>${A.length} суперареалів</b> (DBSCAN по кластерах: ареал поширення). ` +
+  `<span style="color:var(--yellow)">${D.ops.signals_real ? `Потік сигналів сценарний (реальні — ${D.ops.signals_real}: дим з камери).` : 'Потік сигналів повністю сценарний, на реальних місцях парку.'}</span>`;
+$('#arealNote').innerHTML = arealNote();
+const lifeKey = l => LIFE.find(x => l.startsWith(x));
+function renderAreals(){
+  $('#decChips').innerHTML = LIFE.map(d => `<button class="chip ${lifeF.includes(d) ? 'on' : ''}" data-dec="${d}">${d} · ${A.filter(a => lifeKey(a.lifecycle) === d).length}</button>`).join('');
+  $('#zoneBody').innerHTML = A.filter(a => lifeF.includes(lifeKey(a.lifecycle))).map(a => `<tr class="click" data-z="${a.id}"><td class="zid">${a.id}</td>
+    <td><i class="dot" style="background:${TC[a.kind]}"></i> ${esc(a.type_name)}<div class="lvl">${a.level} · ${a.clusters} кластерів · ${a.area_ha} га</div></td>
+    <td style="font-size:12px;line-height:1.6"><b>${esc(a.regularity)}</b><br>${esc(a.coverage)}<span class="lvl"> (${Object.entries(a.per_source).filter(([, n]) => n).map(([k, n]) => ({satellite: 'суп', camera: 'кам', trap: 'фп', social: 'соц', expert: 'гл/екс'})[k] + ' ' + n).join(' · ')})</span><br>${esc(a.lifecycle)}<br>${esc(a.dynamics)}${a.dyn_change != null ? ` (${a.dyn_change > 0 ? '+' : ''}${a.dyn_change}%)` : ''}
+      ${a.recommendations.length ? `<div style="color:var(--orange);margin-top:4px">→ ${a.recommendations.map(esc).join('<br>→ ')}</div>` : ''}</td>
+    <td><button class="btn" data-detail="${a.id}">Детально</button></td></tr>`).join('') || '<tr><td colspan="4" class="muted">немає за фільтром</td></tr>';
+}
+$('#decChips').onclick = e => { const b = e.target.closest('[data-dec]'); if (!b) return; const d = b.dataset.dec;
+  lifeF = lifeF.includes(d) ? lifeF.filter(x => x !== d) : [...lifeF, d]; store.set('eg.life', lifeF); renderAreals(); };
+$('#zoneBody').onclick = e => {
+  const d = e.target.closest('[data-detail]'); if (d) return openAreal(d.dataset.detail);
+  const r = e.target.closest('tr[data-z]'); if (!r) return;
+  $('#zoneBody').querySelectorAll('tr.on').forEach(x => x.classList.remove('on')); r.classList.add('on');
+  $('#mapV').contentWindow.postMessage({type: 'arealfocus', id: r.dataset.z}, '*'); };
+renderAreals();
+
+
+// ---------- повзунок часу: стан суперареалів на дату
+const TLs = D.tl, sl = $('#tSlider'); sl.max = TLs.length - 1; sl.value = TLs.length - 1;
+function setTime(i){
+  const t = TLs[i]; $('#tDate').textContent = t.date;
+  const life = k => t.areals.filter(a => a.lifecycle.startsWith(k)).length;
+  $('#tInfo').textContent = `${t.areals.length} ареалів · активні ${life('активний') + life('новий') + life('відновився')} · згаслі ${life('згас')}`;
+  A = t.areals; renderAreals();
+  $('#arealNote').innerHTML = (i < TLs.length - 1 ? `<b style="color:var(--orange)">Стан на ${t.date}</b> · ` : '') + arealNote();
+  $('#mapV').contentWindow.postMessage({type: 'time', idx: +i}, '*');
+  if (typeof renderRoutesPanel === 'function') renderRoutesPanel(+i);
+}
+sl.oninput = () => setTime(sl.value);
+let playT = null;
+$('#tPlay').onclick = () => {
+  if (playT) { clearInterval(playT); playT = null; $('#tPlay').textContent = '▶'; return; }
+  if (+sl.value === TLs.length - 1) sl.value = 0;
+  $('#tPlay').textContent = '❚❚';
+  playT = setInterval(() => { if (+sl.value >= TLs.length - 1) { clearInterval(playT); playT = null; $('#tPlay').textContent = '▶'; return; }
+    sl.value = +sl.value + 1; setTime(sl.value); }, 450);
+};
+window.addEventListener('message', e => { if (e.data && e.data.type === 'ready' && e.data.map === 'live') {
+  setTime(sl.value);
+  if (!$('#p-chat').hidden) $('#mapV').contentWindow.postMessage({type: 'mode', mode: 'chat'}, '*'); } });
+
+setTime(sl.value);
+
+// ---------- спливаюче вікно ареалу
+const FEED = D.ops.feed;
+let curArealId = null;
+function convexHull(pts){                     // монотонний ланцюг Ендрю
+  pts = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]), lo = [], up = [];
+  for (const p of pts) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); }
+  for (const p of pts.slice().reverse()) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); }
+  return lo.slice(0, -1).concat(up.slice(0, -1));
+}
+const SRC_C = {'супутник': '#60a5fa', 'камера': '#2dd4bf', 'фотопастка': '#e2e8f0', 'соцмережі': '#c084fc', 'гаряча лінія / експерт': '#f472b6'};
+let amap = null, aLayer = null;
+const dayDiff = (a, b) => Math.round((new Date(b) - new Date(a)) / 864e5);
+function openAreal(id){
+  const t = TLs[sl.value], a = t.areals.find(x => x.id === id); if (!a) return;
+  const obsAll = FEED.filter(n => n.areal === id && n.ts.slice(0, 10) <= t.date);
+  const showHist = $('#mHist').checked;
+  const obs = showHist ? obsAll : obsAll.filter(n => dayDiff(n.ts.slice(0, 10), t.date) <= D.ops.contour_days);
+  curArealId = id;
+  $('#arealModal').hidden = false;
+  $('#mTitle').innerHTML = `<span style="color:${TC[a.kind]}">${a.id}</span> · ${esc(a.type_name)}`;
+  $('#mLife').textContent = a.lifecycle; $('#mDate').textContent = 'стан на ' + t.date;
+  if (!amap) {
+    amap = L.map('amap', {zoomControl: true});
+    const dark = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {maxZoom: 16, attribution: 'Esri'});
+    const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom: 19, attribution: 'Esri World Imagery'});
+    sat.addTo(amap); L.control.layers({'Супутник': sat, 'Темна': dark}).addTo(amap);
+    aLayer = L.layerGroup().addTo(amap);
+    // контури — нижній шар, точки — верхній: підсвічений контур ніколи не перекриває точки
+    amap.createPane('polys').style.zIndex = 410; amap.createPane('pts').style.zIndex = 620;
+    const lg = L.control({position: 'bottomleft'});
+    lg.onAdd = () => { const d = L.DomUtil.create('div', 'eg-leg');
+      d.innerHTML = '<b>Точка — джерело</b>' + Object.entries(SRC_C).map(([k, c]) => `<div><i class="pt" style="background:${c}"></i>${k}</div>`).join('') +
+        '<div><i style="display:inline-block;width:14px;height:10px;border:1.5px dashed #fff;margin-right:6px;vertical-align:middle"></i>контур, знайдений супутником</div>' +
+        '<b style="margin-top:6px">Дії команд</b><div><span class="vmark" style="--t:#38bdf8;transform:none">✓<b>A</b></span> <span class="vmark" style="--t:#f472b6;transform:none">✓<b>B</b></span> виїзд групи (×N — кілька)</div>' +
+        '<div><span class="vmark" style="--t:#f472b6;transform:none">◷<b>B</b></span> заплановано</div>' +
+        `<div class="hist-only"><i style="display:inline-block;width:10px;height:10px;border:2px solid #aaa;border-radius:50%;margin-right:6px;vertical-align:middle"></i>старше ${D.ops.contour_days} дн.</div>` +
+        `<div class="hist-only"><i style="display:inline-block;width:14px;height:10px;border:1.5px dashed #9ca3af;margin-right:6px;vertical-align:middle"></i>колишня зона (усі ${D.ops.window_days} дн.)</div>` +
+        `<div style="color:#8f9a8f;margin-top:3px">точка в контурі — його центроїд<br>яскравіша й більша — свіжіша<br>біла обводка — сьогодні/вчора<br>кольоровий пунктир — поточна зона (${D.ops.contour_days} дн.)</div>`; return d; };
+    lg.addTo(amap);
+  }
+  aLayer.clearLayers(); obsMarkers = {}; hlMarker = null;
+  const poly = L.geoJSON(a.geometry, {pane: 'polys', interactive: false, style: {color: ({fire: '#ff6b2c', logging: '#e5c13a', vehicle: '#7fbf5f'})[a.kind], weight: 3, fill: false, dashArray: '8 6'}}).addTo(aLayer);
+  // старші — блідіші й менші, сьогоднішні — яскраві
+  obs.slice().reverse().forEach(n => {
+    const age = dayDiff(n.ts.slice(0, 10), t.date), op = Math.max(0.12, 1 - age / 60);
+    const old = age > D.ops.contour_days;      // старше за вікно контуру — не входить у поточну зону
+    const st = old ? {radius: 6, color: SRC_C[n.source], weight: 2, opacity: 0.75, fill: true, fillOpacity: 0}   // прозора заливка ловить кліки
+                   : {radius: 4 + 6 * op + Math.min(n.count, 4), color: '#ffffff', weight: age <= 1 ? 2 : 0.5, opacity: op, fillColor: SRC_C[n.source], fillOpacity: op};
+    const k = FEED.indexOf(n);
+    const pl = n.poly ? L.polygon(n.poly.map(p => [p[1], p[0]]), {pane: 'polys', color: '#ffffff', weight: 1.5, dashArray: '4 4', opacity: Math.max(0.3, op),
+      fillColor: '#ffffff', fillOpacity: 0.07 * op}).addTo(aLayer) : null;
+    if (pl) pl.baseStyle = {weight: 1.5, dashArray: '4 4', opacity: Math.max(0.3, op), fillOpacity: 0.07 * op};
+    const ha = n.poly ? polyHa(n.poly) : null;
+    obsMarkers[k] = L.circleMarker([n.lat, n.lon], {...st, pane: 'pts'})
+      .bindTooltip(`<b>${esc(n.text)}</b>${n.count > 1 ? ' ×' + n.count : ''}<br>${n.ts} · ${age === 0 ? 'сьогодні' : age + ' дн. тому'}<br>${n.source}${n.simulated ? ' · симуляція' : ''}${ha ? `<br>контур: ${ha} га (центроїд — ця точка)` : ''}${old ? `<br><i>старше ${D.ops.contour_days} дн. — поза поточною зоною ареалу</i>` : ''}`).addTo(aLayer);
+    obsMarkers[k].baseStyle = st; obsMarkers[k].poly = pl;
+    obsMarkers[k].on('mouseover', () => highlightObs(k, false));
+    if (pl) pl.on('mouseover', () => highlightObs(k, false));
+  });
+  let histLayer = null;
+  if (showHist && obsAll.length >= 3) {
+    const hull = convexHull(obsAll.map(n => [n.lon, n.lat]));
+    histLayer = L.polygon(hull.map(p => [p[1], p[0]]), {pane: 'polys', interactive: false, color: '#9ca3af', weight: 1.5, dashArray: '2 6', fill: true, fillOpacity: 0.04}).addTo(aLayer);
+  }
+  // дії команд: позначки виїздів груп (колір групи; ✓ виконано, ◷ заплановано)
+  const visits = visitsOf(id, t.date);
+  // на мапі — виїзди за 30 днів (з «Історією» — усі); близькі (~300 м) зливаються в одну позначку з лічильником
+  const vByPlace = {};
+  visits.filter(v => showHist || v.planned || dayDiff(v.date, t.date) <= D.ops.contour_days)
+    .forEach(v => { const k = (Math.round(v.lat / 0.003) * 0.003).toFixed(3) + ',' + (Math.round(v.lon / 0.004) * 0.004).toFixed(3) + v.tid; (vByPlace[k] = vByPlace[k] || []).push(v); });
+  Object.values(vByPlace).forEach(vs => {
+    const v = vs[0], done = vs.filter(x => !x.planned).length;
+    L.marker([v.lat, v.lon], {pane: 'pts', icon: L.divIcon({iconSize: [0, 0], html: `<div class="vmark" style="--t:${v.color}">${v.planned && !done ? '◷' : '✓'}<b>${v.tid}${vs.length > 1 ? '×' + vs.length : ''}</b></div>`})})
+      .bindTooltip(vs.slice(0, 8).map(x => `<b>${esc(x.team)} · ${x.date.slice(5)} ${x.eta}</b>${x.planned ? ' · заплановано' : ' · виконано'}<br>` +
+        (x.type === 'plan' ? (x.actions || []).map(esc).join(', ') : 'виїзд на подію' + (x.post ? ': ' + x.post.map(esc).join(', ') : ''))).join('<hr style="margin:3px 0;border-color:#555">'))
+      .addTo(aLayer);
+  });
+  setTimeout(() => { amap.invalidateSize(); amap.fitBounds((histLayer || poly).getBounds().pad(0.2)); }, 50);
+  // смуга активності за вікно: день × джерело
+  const W = 360, days = D.ops.window_days, srcs = Object.keys(SRC_C), rowH = 9;
+  const cells = obsAll.map(n => { const age = dayDiff(n.ts.slice(0, 10), t.date); return age <= days ?   // смуга — завжди весь ритм за вікно
+    `<rect x="${(days - age) / days * (W - 4)}" y="${srcs.indexOf(n.source) * (rowH + 3)}" width="4" height="${rowH}" fill="${SRC_C[n.source]}" opacity="${Math.max(0.25, 1 - age / 60)}"/>` : ''; }).join('');
+  const strip = `<svg class="strip" viewBox="0 0 ${W} ${srcs.length * (rowH + 3) + 12}" role="img" aria-label="Активність за ${days} днів">
+    ${srcs.map((s, i) => `<rect x="0" y="${i * (rowH + 3)}" width="${W}" height="${rowH}" fill="#1b241e"/>`).join('')}${cells}
+    <text x="0" y="${srcs.length * (rowH + 3) + 10}" fill="#8f9a8f" font-size="9" font-family="monospace">−${days} дн.</text>
+    <text x="${W}" y="${srcs.length * (rowH + 3) + 10}" fill="#8f9a8f" font-size="9" font-family="monospace" text-anchor="end">${t.date}</text></svg>`;
+  $('#mSide').innerHTML = `<h4>Що тут відбувається</h4>
+    <div class="kvs"><span>Регулярність</span><b>${esc(a.regularity)}</b><span>Джерела</span><span>${esc(a.coverage)}</span>
+      <span>Життєвий цикл</span><span>${esc(a.lifecycle)}</span><span>Динаміка</span><span>${esc(a.dynamics)}${a.dyn_change != null ? ` (${a.dyn_change > 0 ? '+' : ''}${a.dyn_change}%)` : ''}</span>
+      <span>Період</span><span class="mono">${a.first} … ${a.last}</span><span>Кластерів / сигналів</span><span>${a.clusters} / ${a.signals}</span>
+      <span>Впевненість</span><span>${a.confidence_level}</span><span>Площа</span><span>${a.area_ha} га</span></div>
+    <h4>Активність по джерелах</h4>${strip}
+    <h4>Журнал подій</h4><div class="journal">${journalHTML(a, obsAll, t.date, visits)}</div>
+    <h4>Останні спостереження</h4><div class="obs">${obs.slice(0, 15).map(n => `<div data-k="${FEED.indexOf(n)}"><i class="dot" style="background:${SRC_C[n.source]}"></i> ${n.ts.slice(5)} ${esc(n.text)}${n.count > 1 ? ' ×' + n.count : ''}</div>`).join('') || '<span class="muted">немає</span>'}</div>`;
+  $('#mLeg').innerHTML = Object.entries(SRC_C).map(([k, c]) => `<span><i class="dot" style="background:${c}"></i> ${k} (${obs.filter(n => n.source === k).length})</span>`).join('') +
+    '<span class="label" style="margin-left:auto">яскравіше й більше = свіжіше · біла обводка = сьогодні/вчора</span>';
+}
+let obsMarkers = {}, hlMarker = null;
+function polyHa(poly){                       // площа контуру, га (шнурування в локальних метрах)
+  const lat0 = poly[0][1] * Math.PI / 180, mx = 111320 * Math.cos(lat0), my = 110540;
+  let a = 0; poly.forEach((p, i) => { const q = poly[(i + 1) % poly.length]; a += p[0] * mx * q[1] * my - q[0] * mx * p[1] * my; });
+  return (Math.abs(a) / 2 / 1e4).toFixed(1);
+}
+function highlightObs(k, fly){
+  if (hlMarker) { hlMarker.setStyle(hlMarker.baseStyle); hlMarker.closeTooltip(); if (hlMarker.poly) hlMarker.poly.setStyle(hlMarker.poly.baseStyle); }
+  const m = obsMarkers[k]; if (!m) return;
+  m.setStyle({radius: 14, color: '#ffffff', weight: 4, opacity: 1, fillOpacity: m.baseStyle.fillOpacity === 0 ? 0 : 1}); m.bringToFront(); m.openTooltip(); hlMarker = m;
+  if (m.poly) { m.poly.setStyle({weight: 3, dashArray: null, opacity: 1, fillOpacity: 0.25}); m.poly.bringToFront(); m.bringToFront(); }
+  if (fly) amap.flyTo(m.getLatLng(), Math.max(amap.getZoom(), 15), {duration: 0.6});
+  $('#mSide').querySelectorAll('.obs div').forEach(d => d.classList.toggle('on', d.dataset.k === String(k)));
+}
+$('#mSide').onclick = e => { const d = e.target.closest('.obs [data-k]'); if (d) highlightObs(d.dataset.k, true); };
+$('#mSide').onmouseover = e => { const d = e.target.closest('.obs [data-k]'); if (d) highlightObs(d.dataset.k, false); };
+const closeModal = () => { $('#arealModal').hidden = true; };
+$('#mClose').onclick = closeModal;
+$('#mHist').onchange = () => { document.body.classList.toggle('show-hist', $('#mHist').checked); if (curArealId) openAreal(curArealId); };
+$('#arealModal').onclick = e => { if (e.target.id === 'arealModal') closeModal(); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+window.addEventListener('message', e => { if (e.data && e.data.type === 'areal') openAreal(e.data.id); });
+
+
+// ---------- Чат з агентом: /api/chat (PandasAI над даними парку); відповідь з геометрією — на мапу. Без сервера — готова відповідь.
+const chatLog = $('#chatLog'), CHAT_GEO = [];
+function tableHTML(rows){
+  if (!rows || !rows.length) return '';
+  const cols = Object.keys(rows[0]).filter(c => c !== 'geometry_wkt').slice(0, 6);
+  return `<div style="overflow-x:auto;margin-top:8px"><table class="ttable" style="font-size:12px"><thead><tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>` +
+    rows.slice(0, 10).map(r => `<tr>${cols.map(c => `<td>${esc(r[c] == null ? '' : String(r[c]).slice(0, 60))}</td>`).join('')}</tr>`).join('') + '</tbody></table></div>' +
+    (rows.length > 10 ? `<div class="muted" style="font-size:11px">… ще ${rows.length - 10}</div>` : '');
+}
+function chatMsg(who, text, m = {}){
+  let extra = '';
+  if (m.table) extra += tableHTML(m.table);
+  const chartSrc = (window.I18N_LANG === 'en' && m.chart_en) || m.chart;
+  if (m.chart) extra += `<img src="${chartSrc}" alt="графік" style="width:100%;margin-top:8px;border-radius:8px" onload="const l = document.getElementById('chatLog'); l.scrollTop = l.scrollHeight">`;   // висота графіка відома лише після завантаження
+  // кнопка під кожною відповіддю агента: клік — на мапі саме те, що ця відповідь малювала (або дані, з яких її пораховано)
+  if (m.geojson) { CHAT_GEO.push({geojson: m.geojson, title: m.q || text});
+    extra += `<button class="btn geo-btn" data-geo="${CHAT_GEO.length - 1}">🗺 Показати на мапі · ${m.geojson.features.length}${m.geo_source ? ' <span class="muted">дані, з яких пораховано</span>' : ''}</button>`; }
+  else if (who === 'ai' && (m.type || m.table)) extra += '<button class="btn geo-btn" disabled title="У цій відповіді немає координат">🗺 Немає об\'єктів для мапи</button>';
+  chatLog.insertAdjacentHTML('beforeend', `<div class="msg ${who}"><span class="who">${who === 'me' ? 'ви' : 'агент'}</span>${esc(text)}${extra}</div>`);
+  chatLog.scrollTop = chatLog.scrollHeight;
+  if (m.geojson && m.show) showGeo(CHAT_GEO.length - 1);
+}
+function showGeo(i){
+  const g = CHAT_GEO[i]; $('#mapV').contentWindow.postMessage({type: 'chatgeo', geojson: g.geojson, title: g.title}, '*');
+  chatLog.querySelectorAll('[data-geo]').forEach(b => b.classList.toggle('on', +b.dataset.geo === i));     // яка відповідь зараз на мапі
+}
+chatLog.addEventListener('click', e => { const b = e.target.closest('[data-geo]'); if (b) showGeo(+b.dataset.geo); });
+$('#chatChips').innerHTML = ['Покажи ареали вирубки, що розширюються', 'Які ареали згасли?', 'Скільки сигналів від фотопасток за тиждень?', 'Де були нічні дзвінки на гарячу лінію?', 'Як змінювались сигнали по тижнях за типом?']
+  .concat(D.extra.routes ? ['Куди сьогодні їде кожна група?', 'Які таски ще не виконані?'] : [])
+  .map(q => `<button class="chip" data-q="${esc(q)}">${esc(q)}</button>`).join('');
+// Два режими. Без ключа: готові питання з відповідями, записаними заздалегідь (web/assets/app_answers.json), вільне поле вимкнене.
+// З ключем OpenAI чи Anthropic і запущеним сервером асистента (eaglewings/run_assistant.sh): будь-яке питання йде на /ask,
+// PandasAI рахує над даними парку, відповідь — таблиця й об'єкти на мапі. Ключ лише в цій вкладці (sessionStorage) і в запиті.
+let CANNED = null, LIVE = false;
+const ASSIST = (() => { try { return localStorage.getItem('assistantUrl') || 'http://127.0.0.1:8770'; } catch (e) { return 'http://127.0.0.1:8770'; } })();
+const keyOf = () => $('#chatKey').value.trim();
+const keyKind = k => k.startsWith('sk-ant-') ? 'Anthropic' : k.startsWith('sk-') ? 'OpenAI' : null;
+const HISTORY = [];
+try { $('#chatKey').value = sessionStorage.getItem('assistantKey') || ''; } catch (e) {}
+function modeTag(text, cls){ const m = $('#chatMode'); m.textContent = text; m.className = 'keystate' + (cls ? ' ' + cls : ''); }
+async function setMode(){
+  const k = keyOf(), kind = keyKind(k);
+  try { k ? sessionStorage.setItem('assistantKey', k) : sessionStorage.removeItem('assistantKey'); } catch (e) {}
+  LIVE = false; $('#chatIn').disabled = true; $('#chatGo').disabled = true;
+  if (k && !kind) modeTag('ключ не схожий на OpenAI чи Anthropic', 'bad');
+  else if (kind) {
+    modeTag('перевіряю ключ…', 'wait');
+    let res = null;
+    try {
+      const r = await fetch(ASSIST + '/check', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({key: k})});
+      res = r.ok ? await r.json() : null;
+    } catch (e) { res = null; }
+    if (k !== keyOf()) return;                       // поки перевіряли, ключ уже змінили
+    if (!res) { modeTag('сервер асистента не запущено', 'bad'); chatMsg('ai', 'Сервер асистента не відповідає. Запустіть eaglewings/run_assistant.sh, а поки працюють готові питання.'); }
+    else if (!res.ok) { modeTag(`${kind} · ключ не працює`, 'bad'); chatMsg('ai', `${res.text} Поки працюють готові питання.`); }
+    else { LIVE = true; modeTag(`живі відповіді · ${kind}`, 'ok'); }
+  } else modeTag('готові питання');
+  $('#chatIn').disabled = !LIVE; $('#chatGo').disabled = !LIVE;
+  $('#chatIn').placeholder = LIVE ? 'Питання про парк: пожежі, ризик, рубки, сигнали…' : 'Оберіть готове питання вище';
+}
+$('#chatKey').addEventListener('change', setMode);
+$('#chatIn').disabled = true; $('#chatGo').disabled = true;
+$('#chatIn').placeholder = 'Оберіть готове питання вище';
+chatMsg('ai', 'Привіт! Натисніть готове питання вище. Щоб ставити свої, введіть ключ OpenAI або Anthropic.');
+fetch(D.main ? 'assets/app_answers.json' : `assets/app_answers_${SEL}.json`).then(r => r.json()).then(j => CANNED = j).catch(() => CANNED = {});
+if (keyOf()) setMode();
+async function chatSend(q){
+  q = (q || $('#chatIn').value).trim(); if (!q) return; $('#chatIn').value = ''; chatMsg('me', q);
+  chatLog.insertAdjacentHTML('beforeend', '<div class="typing" id="typing">агент аналізує дані…</div>'); chatLog.scrollTop = chatLog.scrollHeight;
+  let m;
+  if (LIVE) {
+    try {
+      const r = await fetch(ASSIST + '/ask', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({question: q, key: keyOf(), recent: HISTORY.slice(-6), park: SEL, lang: window.I18N_LANG === 'en' ? 'en' : 'uk'})});
+      m = r.ok ? await r.json() : {type: 'error', text: `Сервер асистента відповів помилкою ${r.status}.`};
+    } catch (e) { m = {type: 'error', text: 'Сервер асистента не відповідає.'}; }
+  } else {
+    await new Promise(r => setTimeout(r, 500));
+    m = (CANNED || {})[q] || {text: 'Без ключа доступні лише готові питання.'};
+  }
+  const t = $('#typing'); if (t) t.remove();
+  if (m.key_problem) { LIVE = false; modeTag(`${keyKind(keyOf()) || ''} · ключ не працює`, 'bad'); $('#chatIn').disabled = true; $('#chatGo').disabled = true; $('#chatIn').placeholder = 'Оберіть готове питання вище'; }
+  HISTORY.push({role: 'user', text: q}, {role: 'ai', text: m.text || ''});
+  chatMsg('ai', m.text || '', {...m, q, show: true});
+}
+$('#chatGo').onclick = () => chatSend(); $('#chatIn').onkeydown = e => { if (e.key === 'Enter') chatSend(); };
+$('#chatChips').onclick = e => { const b = e.target.closest('[data-q]'); if (b) chatSend(b.dataset.q); };
+
+// ---------- результати досліджень у розділах застосунку (data/processed/app_extra.json)
+const X = D.extra, pc = v => Math.round(v * 100) + ' %', c2 = v => v.toFixed(2).replace('.', ',');
+
+// мапа досліджень живе в самій Аналітиці: основна мапа Моніторингу її не бачить
+async function anMap(){
+  const POS = '#d95926', AMB = '#f2a541', GREY = '#9aa59b';
+  const m = L.map('anMapEl', {scrollWheelZoom: false, preferCanvas: true, zoomSnap: .5}).setView(D.park_center, 10.5);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {maxZoom: 16, attribution: 'Esri'}).addTo(m);
+  X.park.forEach(p => L.polyline(p, {color: '#c9d1c9', weight: 1.5, dashArray: '5 4', interactive: false}).addTo(m));
+  const parkB = L.latLngBounds(X.park.flat());
+  const [xs, spr, risk26] = await Promise.all(['science/extra.json', 'science/spread.json', 'science/risk_2026.geojson'].map(u => fetch(u).then(r => r.ok ? r.json() : null).catch(() => null)));
+  const F = xs && xs.fire2023, t0 = F ? new Date(F.start.replace(' ', 'T') + 'Z') : null, pts = F ? F.h.map((h, i) => ({h, ll: [F.lat[i], F.lon[i]], s: F.sensor[i]})) : [];   // великої пожежі може не бути
+  const sl = $('#anSl'), rng = $('#anRange'), lab = $('#anLab'), btn = $('#anPlay'), leg = $('#anLeg');
+  const swatch = (c, t, ring) => `<span style="display:inline-flex;align-items:center;gap:6px;margin-right:14px"><i style="width:12px;height:12px;border-radius:3px;display:inline-block;${ring ? 'border:2px solid ' + c : 'background:' + c}"></i>${t}</span>`;
+  let cur = L.layerGroup().addTo(m), tick = () => {}, timer = null, arrow = null;
+  const stop = () => { if (timer) { clearInterval(timer); timer = null; } btn.textContent = '▶ відтворити'; };
+  btn.onclick = () => { if (timer) return stop(); if (+rng.value >= +rng.max) rng.value = 0; btn.textContent = '❚❚ пауза';
+    const stepUp = +rng.max > 50 ? 3 : 1; timer = setInterval(() => { rng.value = Math.min(+rng.max, +rng.value + stepUp); tick(); if (+rng.value >= +rng.max) stop(); }, +rng.max > 50 ? 60 : 700); };
+  rng.oninput = () => tick();
+  const polys = spr ? spr.poly.map(p => L.polygon(p, {weight: .3, color: '#10160f', fillOpacity: 0, interactive: false})) : [];
+  const MODES = {
+    burn(){ L.imageOverlay(X.burn.img || 'assets/an_burn.png', X.burn.bounds, {opacity: 1}).addTo(cur); m.fitBounds(parkB);
+      if (X.burn.hansen_ha < 5) return [`У 2023 році в цьому парку згарища майже не було (Hansen ${X.burn.hansen_ha.toLocaleString('uk')} га): оцінювати карту згарища нема на чому.`, swatch(POS, 'збіг') + swatch(AMB, 'перебільшення') + swatch(GREY, 'пропуск')];
+      return [`Оцінка ${X.burn.ha.toLocaleString('uk')} га проти Hansen ${X.burn.hansen_ha.toLocaleString('uk')} га. Точність ${pc(X.burn.precision)}, повнота ${pc(X.burn.recall)}, F1 ${c2(X.burn.f1)}.`, swatch(POS, 'збіг') + swatch(AMB, 'перебільшення') + swatch(GREY, 'пропуск')]; },
+    effis(){ const E = X.effis; m.fitBounds(parkB);
+      E.firms.forEach(f => L.circleMarker([f[0], f[1]], {radius: 3, weight: 0, fillColor: f[2] ? '#7dd3a8' : AMB, fillOpacity: .85}).bindTooltip(`${f[3]} · ${f[4]}${f[2] ? ' · у лісі' : ''}`).addTo(cur));
+      E.fires.forEach(e => L.circleMarker([e.lat, e.lon], {radius: 8 + Math.sqrt(e.area_ha), color: e.seen ? '#22c55e' : POS, weight: 2.5, fill: false}).bindTooltip(`Згарище EFFIS ${e.start} · ${fmtN(e.area_ha)} га · ${e.seen ? 'супутник бачив' : 'жодної теплової точки FIRMS'}`).addTo(cur));
+      return [`Згарищ EFFIS у парку з буфером: ${E.n}, із сигналом FIRMS: ${E.seen}. Теплових точок ${fmtN(E.points)}: у березні–квітні ${pc(E.spring)}, у лісі ${pc(E.forest)} — це радше весняні пали, ніж лісові пожежі.`,
+        swatch('#22c55e', 'згарище з сигналом', true) + swatch(POS, 'згарище без сигналу', true) + swatch('#7dd3a8', 'точка в лісі') + swatch(AMB, 'точка поза лісом')]; },
+    zones(){ const Z = X.zones; Z.cells.forEach(p => L.polygon(p, {stroke: false, fillColor: '#a78bfa', fillOpacity: .55, interactive: false}).addTo(cur));
+      (Z.last || []).forEach(p => L.polygon(p, {color: '#e5c13a', weight: 1.2, fill: false, interactive: false}).addTo(cur)); m.fitBounds(parkB);
+      return [`Зони патрулів на ${Z.year} рік із прогнозу переможця LG (${Z.approach}): ${pc(Z.share)} гексів парку. На тесті туди потрапило ${pc(Z.capture)} нових втрат лісу; «де рубали торік» — ${pc(Z.last_capture)}. Кандидати, а не доведені рубки.`,
+        swatch('#a78bfa', 'зона патруля на наступний рік') + swatch('#e5c13a', 'де рубали торік', true)]; },
+    fires(){ if (!D.main || !F) { m.fitBounds(parkB); const mx = Math.max(1, ...X.fires.top.map(f => f.n));     // інші парки: найбільші пожежі за FIRMS
+        X.fires.top.forEach(f => L.circleMarker([f.lat, f.lon], {radius: 6 + 14 * Math.sqrt(f.n / mx), color: AMB, weight: 1.5, fillColor: POS, fillOpacity: .6}).bindTooltip(`${f.n} точок · ${f.first} – ${f.last}`).addTo(cur));
+        return [`Усього в парку за 2021–2025: ${X.fires.points} теплових точок → ${X.fires.fires} пожеж (зведення переможцем FM). На мапі ${X.fires.top.length} найбільших.`, swatch(POS, 'пожежа, розмір — кількість точок')]; }
+      const ms = pts.map(p => L.circleMarker(p.ll, {radius: p.s === 'VIIRS' ? 3 : 5, weight: 0, fillOpacity: .9, fillColor: POS}));
+      rng.max = Math.ceil(Math.max(...F.h)); rng.value = rng.max; sl.hidden = false; m.fitBounds(parkB);
+      tick = () => { const H = +rng.value; cur.clearLayers(); pts.forEach((p, i) => { if (p.h <= H) { const fresh = H - p.h <= 12; ms[i].setStyle({fillOpacity: fresh ? .95 : .3, fillColor: fresh ? AMB : POS}); cur.addLayer(ms[i]); } });
+        const d = new Date(t0.getTime() + H * 36e5), n = pts.filter(p => p.h <= H).length; lab.textContent = `${d.toISOString().slice(0, 16).replace('T', ' ')} UTC · доба ${Math.floor(H / 24) + 1} · ${n.toLocaleString('uk')} детекцій`; };
+      tick(); return [`Пожежа серпня 2023 по годинах. Усього в парку за 2021–2025: ${X.fires.points} точок → ${X.fires.fires} пожеж, збіг з EFFIS ${c2(X.fires.f1)}.`, swatch(AMB, 'останні 12 год') + swatch(POS, 'раніше')]; },
+    spread(){ polys.forEach(p => p.addTo(cur)); rng.max = spr.days.length - 1; rng.value = spr.days.findIndex(d => d.t === X.spread.t); sl.hidden = false; m.fitBounds(L.latLngBounds(spr.poly.flat()));
+      tick = () => { const d = spr.days[+rng.value], Bn = new Set(d.burned), Y = new Set(d.y24), P = new Set(d['p24_' + spr.champion]);
+        polys.forEach((pl, i) => { const y = Y.has(i), q = P.has(i), col = Bn.has(i) ? '#4a2a18' : y && q ? POS : q ? AMB : y ? GREY : null; pl.setStyle({fillColor: col || '#000', fillOpacity: col ? .85 : 0}); });
+        let tp = 0, fp = 0, fn = 0; Y.forEach(i => P.has(i) ? tp++ : fn++); P.forEach(i => { if (!Y.has(i)) fp++; });
+        lab.textContent = `${d.t} UTC · доба ${+rng.value + 1} · вітер ${String(d.wind_ms).replace('.', ',')} м/с · F1 ${c2(2 * tp / Math.max(1, 2 * tp + fp + fn))}`;
+        if (arrow) m.removeLayer(arrow); const b = m.getBounds(), c = [b.getNorth() - (b.getNorth() - b.getSouth()) * .12, b.getWest() + (b.getEast() - b.getWest()) * .06];
+        arrow = L.marker(c, {interactive: false, icon: L.divIcon({className: '', iconSize: [30, 44], iconAnchor: [15, 22], html: `<div style="transform:rotate(${d.wind_to}deg);font:700 28px Inter;color:#fff;text-shadow:0 0 6px #000;text-align:center">↑</div><div style="font:600 11px Inter;color:#fff;text-shadow:0 0 4px #000;text-align:center">вітер</div>`})}).addTo(m); };
+      tick(); return [`${X.spread.name}: прогноз на 24 години по добах, LightGBM. Архівна пожежа, F1 ${c2(X.spread.f1)}: працює слабко.`, swatch('#4a2a18', 'вже згоріло') + swatch(POS, 'збіг') + swatch(AMB, 'зайвий прогноз') + swatch(GREY, 'пропуск')]; },
+    risk(){ X.risk.cells.forEach(c => L.polygon(c.poly, {stroke: false, fillColor: AMB, fillOpacity: .2 + .6 * c.p, interactive: false}).addTo(cur)); m.fitBounds(parkB);
+      return [`20 % найризикованіших гексів. Модель слабка: ROC-AUC ${c2(X.risk.roc)}.`, swatch(AMB, 'вищий ризик яскравіший')]; },
+    towers(){ const T = X.towers, idx = new Map(T.h3.map((h, i) => [h, i])), LEV = [['нижні 50 %', '#7a4a22'], ['50–80 %', '#a8622a'], ['80–95 %', '#e0812f'], ['верхні 5 %', '#ffb27a']], lv = r => r >= .95 ? 3 : r >= .8 ? 2 : r >= .5 ? 1 : 0;
+      if (risk26) L.geoJSON(risk26, {interactive: false, style: f => { const i = idx.get(f.properties.h3), v = T.seen[i]; return {stroke: false, fillColor: v ? LEV[lv(T.rank[i])][1] : '#26332b', fillOpacity: v ? .85 : .7}; }}).addTo(cur);
+      else if (T.poly) T.poly.forEach((p, i) => L.polygon(p, {stroke: false, interactive: false, fillColor: T.seen[i] ? LEV[lv(T.rank[i])][1] : '#26332b', fillOpacity: T.seen[i] ? .85 : .7}).addTo(cur));
+      T.towers.forEach((t, i) => L.marker([t.lat, t.lon], {icon: L.divIcon({className: '', iconSize: [40, 20], iconAnchor: [10, 12], html: `<div style="color:#fff;font:700 15px Inter;text-shadow:0 0 4px #000;white-space:nowrap">▲ ${i + 1}</div>`})}).bindTooltip(`Вежа ${i + 1} · висота ${t.elev} м · разом бачать ${pc(t.coverage)} ризику`).addTo(cur));
+      m.fitBounds(parkB);
+      return [`Місця обрала перевірка на минулих пожежах. Вежі, поставлені за даними до 2023 року, побачили б ${pc(T.first)} пожеж 2023–2025 (інтервал ${pc(T.first_lo)}–${pc(T.first_hi)}), випадкові вежі ${pc(T.random)}. Пожеж у тесті лише 13, тож це рекомендація для обговорення. Огляд 360°, 10 км, рельєф SRTM. Колір це рівні з вкладки «Ризик»: разом вежі бачать ${pc(T.towers[2].coverage)} зваженого ризику.`, LEV.map(([k, c]) => swatch(c, k + ', видно')).join('') + swatch('#26332b', 'не видно')]; },
+    cams(){ const T = X.cp; T.lines.forEach(l => L.polyline(l, {color: AMB, weight: 1.6, opacity: .75, interactive: false}).addTo(cur));
+      T.events.filter(e => e.kind === 'logging').forEach(e => L.circleMarker([e.lat, e.lon], {radius: 3, weight: 0, fillColor: e.seen ? '#7dd3a8' : GREY, fillOpacity: .9, interactive: false}).addTo(cur));
+      T.cameras.forEach((c, i) => L.marker([c.lat, c.lon], {icon: L.divIcon({className: '', iconSize: [34, 18], iconAnchor: [8, 10], html: `<div style="color:#fff;font:700 13px Inter;text-shadow:0 0 4px #000;white-space:nowrap">■ ${i + 1}</div>`})}).bindTooltip(`Камера ${i + 1} · ${c.km} км від в'їзду · під'їзд до ${pc(c.share)} гексів`).addTo(cur));
+      m.fitBounds(parkB);
+      return [`10 місць на дорогах, через які проходить під'їзд до ${pc(T.forest)} лісу. На перевірці 2021–2024 камери перехопили б ${pc(T.log)} рубок (інтервал ${pc(T.log_lo)}–${pc(T.log_hi)}), випадкові місця ${pc(T.random)}. Це припущення, що їдуть найкоротшим шляхом: якщо ні, ${pc(T.sens)}. Реальних проїздів у нас немає, тому це рекомендація для обговорення.`, swatch(AMB, "під'їзди під камерами") + swatch('#7dd3a8', 'рубка, під\'їзд перехоплено') + swatch(GREY, 'рубка, ні')]; },
+    cut(){ X.logging.cand.forEach(c => { L.polygon(c.poly, {color: c.opera ? '#22c55e' : '#e5c13a', weight: 2, fillOpacity: .45}).addTo(cur); L.circleMarker([c.lat, c.lon], {radius: 11, color: c.opera ? '#22c55e' : '#e5c13a', weight: 1.5, fill: false}).bindTooltip(`Кандидат ${X.logging.year} · ${c.ha} га${c.opera ? ' · є й у NASA OPERA' : ''}`).addTo(cur); }); m.fitBounds(parkB);
+      if (!X.logging.cand.length) return [`Кандидатів за ${X.logging.year} рік у цьому парку немає: переможець LD (${X.logging.approach}) не знайшов ділянок від 0,3 га поза згарищами.`, ''];
+      return [`Кандидати за ${X.logging.year} рік від переможця LD (${X.logging.approach}), не доведені рубки. Точність у цьому парку ${pc(X.logging.precision)}, разом з OPERA ${pc(X.logging.both_precision)}.`, swatch('#22c55e', 'є й у NASA OPERA') + swatch('#e5c13a', 'лише Sentinel-2')]; },
+    fc(){ X.forecast.cells.forEach(p => L.polygon(p, {stroke: false, fillColor: '#a78bfa', fillOpacity: .55, interactive: false}).addTo(cur)); m.fitBounds(parkB);
+      return [`Прогноз вирубки на ${X.forecast.year}: 11 % найризикованіших гексів. На тесті знайшов ${pc(X.forecast.capture)} втрат, рубок у парку мало.`, swatch('#a78bfa', 'ризикованіші гекси')]; }};
+  const show = k => { stop(); tick = () => {}; cur.clearLayers(); if (arrow) { m.removeLayer(arrow); arrow = null; } sl.hidden = true; document.querySelectorAll('#anMapTabs .chip').forEach(b => b.classList.toggle('on', b.dataset.k === k)); const [n, l] = MODES[k](); $('#anMapNote').textContent = n; leg.innerHTML = l; };
+  $('#anMapTabs').onclick = e => { const b = e.target.closest('[data-k]'); if (b) show(b.dataset.k); };
+  m.invalidateSize(); show(X.fires ? 'fires' : (document.querySelector('#anMapTabs .chip') || {dataset: {k: 'towers'}}).dataset.k);
+}
+
+// ---------- клин камери: детекція з кадру лягає на мапу в напрямку рамки (як на сторінці дослідження)
+let wedgeDone = false;
+function camWedge(){
+  if (wedgeDone || !X.camera) return; wedgeDone = true;
+  const K = X.camera, CA = K.cam, deg = a => a * Math.PI / 180, kx = 111320 * Math.cos(deg(CA.lat)), pt = (az, d) => [CA.lat + d * Math.cos(deg(az)) / 111320, CA.lon + d * Math.sin(deg(az)) / kx];
+  const m = L.map('camWedge', {scrollWheelZoom: false, preferCanvas: true, zoomSnap: .5});
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {maxZoom: 16, attribution: 'Esri'}).addTo(m);
+  const arc = []; for (let a = CA.bearing - CA.fov / 2; a <= CA.bearing + CA.fov / 2 + .1; a += 2) arc.push(pt(a, CA.rmax));
+  L.polygon([[CA.lat, CA.lon], ...arc], {color: '#c9d1c9', weight: 1, fill: false, interactive: false}).addTo(m);
+  const cells = K.cells.map(c => ({...c, l: L.polygon(c.poly, {fillColor: c.vis ? '#4f6a7d' : '#2a3530', fillOpacity: .8, color: '#10160f', weight: .3}).bindTooltip(`азимут ${Math.round(c.az)}° · ${Math.round(c.dist)} м · ${c.vis ? 'видно з вишки' : 'закрито рельєфом'}`, {sticky: true}).addTo(m)}));
+  K.firms.forEach(p => L.circleMarker([p[0], p[1]], {radius: 3, weight: 0, fillColor: '#f2a541', fillOpacity: .9}).bindTooltip(`FIRMS ${p[2]}: камера бачила б цю пожежу`).addTo(m));
+  L.marker([CA.lat, CA.lon], {interactive: false, icon: L.divIcon({className: '', iconSize: [80, 20], iconAnchor: [9, 12], html: '<div style="color:#fff;font:700 15px Inter;text-shadow:0 0 4px #000;white-space:nowrap">▲<span style="font-size:11px;margin-left:2px">CAM-02</span></div>'})}).addTo(m);
+  m.invalidateSize(); m.fitBounds(L.latLngBounds([[CA.lat, CA.lon], pt(CA.bearing - CA.fov / 2, CA.rmax), pt(CA.bearing + CA.fov / 2, CA.rmax), pt(CA.bearing, CA.rmax)]), {padding: [14, 14]});
+  let last = -1;
+  (function sync(){ const fi = Math.min(K.frames.length - 1, Math.floor((vid.currentTime || 0) * K.fps));
+    if (fi !== last) { last = fi; const fr = K.frames[fi], ws = fr.d.map(([kind, conf, x0, x1]) => ({kind, conf, a0: CA.bearing + (x0 / K.frame_w - .5) * CA.fov, a1: CA.bearing + (x1 / K.frame_w - .5) * CA.fov}));
+      cells.forEach(c => { if (!c.vis) return; const hit = ws.filter(w => ((c.az - w.a0 + 360) % 360) <= ((w.a1 - w.a0 + 360) % 360) + 1e-6); c.l.setStyle({fillColor: hit.some(w => w.kind !== 'person') ? '#d95926' : hit.length ? '#199e70' : '#4f6a7d'}); });
+      $('#camDets').textContent = `кадр ${fi + 1} з ${K.frames.length} · ` + (ws.length ? ws.map(w => `${w.kind === 'person' ? 'люди' : 'дим'}: азимут ${Math.round(w.a0)}–${Math.round(w.a1)}°, впевненість ${c2(w.conf)}`).join(' · ') : 'детекцій немає'); }
+    requestAnimationFrame(sync); })();
+}
+document.querySelector('.tabs[data-group] [data-tab="v-video"]').addEventListener('click', () => setTimeout(camWedge, 60));
+if (!$('#v-video').hidden) setTimeout(camWedge, 300);
+
+// ---------- Аналітика: палітра для графіків перевірена валідатором (CVD / normal-vision / контраст на темному фоні):
+//            пожежа — помаранчевий, вирубка — синій, проїзд — бірюзовий; групи — блакитний / рожевий. Підписи завжди поруч із лініями.
+const AN_C = {fire: '#d95926', logging: '#3987e5', vehicle: '#199e70'}, AN_T = {A: '#2f9fd8', B: '#e0609e'}, AN_UA = {fire: 'пожежа', logging: 'вирубка', vehicle: 'проїзд'};
+function lineChart(el, xs, series, {fmt = v => v, unit = ''} = {}){
+  // xs — підписи по осі X; series — [{name, color, values}]; одна вісь Y від 0
+  const W = el.clientWidth || 460, H = 210, L = 34, R = 74, T = 10, B = 24, max = Math.max(1, ...series.flatMap(s => s.values)) * 1.1;
+  const x = i => L + i * (W - L - R) / Math.max(1, xs.length - 1), y = v => T + (H - T - B) * (1 - v / max);
+  const ticks = [0, max / 2, max].map(v => Math.round(v));
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(series.map(s => s.name).join(', '))}">`;
+  ticks.forEach(t => svg += `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="#26332b"/><text x="${L - 6}" y="${y(t) + 4}" fill="#8f9a8f" font-size="10" text-anchor="end">${t}</text>`);
+  [0, Math.floor(xs.length / 2), xs.length - 1].forEach(i => svg += `<text x="${x(i)}" y="${H - 6}" fill="#8f9a8f" font-size="10" text-anchor="middle">${xs[i]}</text>`);
+  series.forEach(s => {
+    svg += `<polyline fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" points="${s.values.map((v, i) => x(i) + ',' + y(v)).join(' ')}"/>`;
+    const lv = s.values[s.values.length - 1];
+    svg += `<circle cx="${x(xs.length - 1)}" cy="${y(lv)}" r="4" fill="${s.color}" stroke="#18221c" stroke-width="2"/><text x="${x(xs.length - 1) + 8}" y="${y(lv) + 4}" fill="#ece8dc" font-size="11">${esc(s.name)}</text>`;
+  });
+  svg += `<line class="xh" x1="0" x2="0" y1="${T}" y2="${H - B}" stroke="#8f9a8f" stroke-dasharray="3 3" visibility="hidden"/><rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent"/></svg>`;
+  el.innerHTML = svg + '<div class="an-tip"></div>';
+  const sv = el.querySelector('svg'), tip = el.querySelector('.an-tip'), xh = el.querySelector('.xh');
+  sv.addEventListener('mousemove', e => {
+    const r = sv.getBoundingClientRect(), px = (e.clientX - r.left) * W / r.width, i = Math.max(0, Math.min(xs.length - 1, Math.round((px - L) / ((W - L - R) / Math.max(1, xs.length - 1)))));
+    xh.setAttribute('x1', x(i)); xh.setAttribute('x2', x(i)); xh.setAttribute('visibility', 'visible');
+    tip.style.display = 'block'; tip.innerHTML = `<b>${xs[i]}</b><br>` + series.map(s => `<span style="color:${s.color}">●</span> ${esc(s.name)}: <b>${fmt(s.values[i])}${unit}</b>`).join('<br>');
+    tip.style.left = Math.min(r.width - 150, (x(i) * r.width / W) + 12) + 'px'; tip.style.top = '30px';
+  });
+  sv.addEventListener('mouseleave', () => { tip.style.display = 'none'; xh.setAttribute('visibility', 'hidden'); });
+}
+function barList(el, rows, color){
+  // горизонтальні смуги: одна серія, підпис і значення текстом
+  const max = Math.max(1, ...rows.map(r => r[1]));
+  el.innerHTML = rows.map(([k, v, hint]) => `<div class="bar-row" title="${esc(hint || '')}" style="display:grid;grid-template-columns:150px 1fr 40px;gap:8px;align-items:center;font-size:12.5px;margin:5px 0">
+    <span>${esc(k)}</span><span style="background:#1b241e;border-radius:4px;height:12px"><span style="display:block;height:12px;width:${100 * v / max}%;background:${color};border-radius:0 4px 4px 0"></span></span><b class="mono" style="text-align:right">${v}</b></div>`).join('');
+}
+let anDone = false;
+function renderAnalytics(){
+  if (anDone) return; anDone = true;
+  const now = new Date(D.ops.now), weeks = 13, wk = d => Math.floor((now - new Date(d)) / (7 * 864e5));
+  const xs = Array.from({length: weeks}, (_, i) => { const d = new Date(now - (weeks - 1 - i) * 7 * 864e5); return d.toISOString().slice(5, 10); });
+  const ev = {fire: Array(weeks).fill(0), logging: Array(weeks).fill(0), vehicle: Array(weeks).fill(0)};
+  D.ops.feed.forEach(n => { const w = wk(n.ts); if (w >= 0 && w < weeks) ev[n.kind][weeks - 1 - w] += n.count || 1; });
+  const life = {}; D.ops.areals.forEach(a => { const k = a.lifecycle.split(' ')[0]; life[k] = (life[k] || 0) + 1; });
+  const src = {}; D.ops.feed.forEach(n => { src[n.source] = (src[n.source] || 0) + (n.count || 1); });
+  $('#anBody').innerHTML = `
+    <div class="an-tiles">
+      <div class="an-tile"><b>${D.ops.signals}</b><span>сигналів за 90 днів</span></div>
+      <div class="an-tile"><b>${D.ops.clusters}</b><span>подій (кластерів)</span></div>
+      <div class="an-tile"><b>${D.ops.areals.length}</b><span>ареалів</span></div>
+      ${X.burn ? `<div class="an-tile"><b>${X.burn.ha.toLocaleString('uk')} га</b><span>згарище 2023, оцінка за NDVI</span></div>` : X.effis ? `<div class="an-tile"><b>${X.effis.seen} з ${X.effis.n}</b><span>згарищ EFFIS бачив FIRMS</span></div>` : ''}
+    </div>
+    <div class="an-card" style="margin-bottom:14px"><h3>Мапа результатів</h3><div class="row" id="anMapTabs" style="margin:6px 0">${[['fires', D.main && X.burn ? 'Пожежа 2023' : 'Пожежі'],['burn','Згарище'],['effis','Згарища EFFIS'],['spread','Поширення'],['risk','Ризик'],['zones','Зони'],['towers','Де ставити вежі'],['cams','Де ставити камери'],['cut','Кандидати на вирубку'],['fc','Прогноз вирубки']].filter(x => !({fires: !X.fires, spread: !X.spread, cams: !X.cp, towers: !X.towers, cut: !X.logging, fc: !X.forecast, risk: !X.risk, burn: !X.burn, effis: !X.effis, zones: !X.zones})[x[0]]).map(x => `<button class="chip" data-k="${x[0]}">${x[1]}</button>`).join('')}</div><div class="sub" id="anMapNote"></div><div id="anSl" hidden style="display:flex;gap:10px;align-items:center;margin:8px 0 2px"><button class="btn" id="anPlay">▶ відтворити</button><input type="range" id="anRange" style="flex:1;accent-color:#ff6b2c"><span class="mono" id="anLab" style="font-size:12px;min-width:330px"></span></div><div class="sub" id="anLeg" style="margin-top:6px"></div><div id="anMapEl" style="height:520px;border-radius:10px;margin-top:8px"></div></div>
+    <div class="an-grid">
+      <div class="an-card"><h3>Сигнали по тижнях за типом</h3><div class="sub">13 тижнів · усі джерела</div><div class="an-leg">${Object.keys(AN_C).map(k => `<span><i style="background:${AN_C[k]}"></i>${AN_UA[k]}</span>`).join('')}</div><div id="anEv"></div></div>
+      ${X.day ? `<div class="an-card"><h3>Небезпечні дні, 2025</h3><div class="sub">найвища ймовірність за тиждень · модель на погоді NASA POWER, PR-AUC ${c2(X.day.pr_auc)}</div><div id="anDay"></div></div>` : ''}
+      <div class="an-card"><h3>Ареали за життєвим циклом</h3><div class="sub">стан на ${D.ops.now.slice(0, 10)}</div><div id="anLife"></div></div>
+      <div class="an-card"><h3>Сигнали за джерелом</h3><div class="sub">90 днів</div><div id="anSrc"></div></div>
+    </div>`;
+  lineChart($('#anEv'), xs, Object.keys(AN_C).map(k => ({name: AN_UA[k], color: AN_C[k], values: ev[k]})));
+  if (X.day) lineChart($('#anDay'), X.day.x, [{name: 'імовірність', color: AN_C.fire, values: X.day.p}, {name: 'був вогонь', color: '#8f9a8f', values: X.day.y}]);
+  anMap();
+  barList($('#anLife'), Object.entries(life).sort((a, b) => b[1] - a[1]), '#8f9a8f');
+  barList($('#anSrc'), Object.entries(src).sort((a, b) => b[1] - a[1]), '#8f9a8f');
+}
+
+// ---------- координати
+document.querySelectorAll('.mapbar').forEach(bar => {
+  const inp = bar.querySelector('.coordIn');
+  const go = () => { const m = inp.value.match(/(-?\d+(?:\.\d+)?)\s*[,; ]\s*(-?\d+(?:\.\d+)?)/); if (m) fly(+m[1], +m[2], 16, `${(+m[1]).toFixed(5)}, ${(+m[2]).toFixed(5)}`); };
+  bar.querySelector('.coordGo').onclick = go; inp.onkeydown = e => { if (e.key === 'Enter') go(); };
+  bar.querySelector('.homeGo').onclick = () => fly(D.park_center[0], D.park_center[1], 11);
+});
+window.addEventListener('message', e => { if (!e.data || e.data.type !== 'mapclick') return;
+  const bar = document.querySelector(`#view-${VIEW} .mapbar`), t = `${e.data.lat.toFixed(5)}, ${e.data.lon.toFixed(5)}`;
+  bar.querySelector('.clickInfo').textContent = t; bar.querySelector('.coordIn').value = t; });
+setView(VIEW);
+
+$('#credits').innerHTML = `Дані: NASA FIRMS (VIIRS S-NPP, MODIS) · Hansen/UMD/Google/USGS/NASA Global Forest Change 2024 v1.12 · межі та дороги © OpenStreetMap (ODbL) · знімки Esri World Imagery · фото й відео Wikimedia Commons (CC BY-SA). ` +
+  `Відеострім — демо: реальний запис пожежі в Карсті (2022, ${esc(V.author)}), умовно прив'язаний до камери в парку. Частина проїздів симульована (позначено на картках).`;
+</script>
+</body>
+</html>

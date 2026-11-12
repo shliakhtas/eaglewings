@@ -1,0 +1,34 @@
+<section id="cg">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">CG</span><div><span class="label">CG · камера на координати</span><h2>Де на мапі дим, який камера бачить у кадрі?</h2></div></div>
+    <div class="answer" id="cg-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Реальні гекси парку, де NASA FIRMS бачив вогонь у 2022 і 2023 роках, і рельєф SRTM. Реальних детекцій диму з відомими координатами немає, тому напрямок із камери симульовано.</p></div>
+      <div class="dsbadge" id="cg-ds"></div><div class="tiles" id="cg-tiles"></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Геометрія, без навчання. Спільний параметр лише один: ширина клина.</p></div>
+      <div class="apwrap"><table class="ap" id="cg-ap"></table></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: валідація 2022, тест 2023</h4><p>Для кожного гекса з пожежею беремо справжній напрямок і додаємо похибку з відхиленням 1, 3, 5 або 10°. Ширину клина (1, 2 чи 3 відхилення) обрано на 2022: найменша зона, що накриває місце щонайменше в 90 % випадків.</p></div><div><h4>Метрики</h4><p>Влучання: справжній гекс у зоні. Площа зони в км². Відстань від місця до центру зони.</p></div></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>Це перевірка геометрії на симуляції, а не точність детектора.</p></div>
+      <figure class="chart" id="c-cg-res"><figcaption><h3>Площа зони пошуку на тесті 2023</h3><p class="read"><b>Як читати:</b> ліворуч краще: менша зона, менше їхати перевіряти. Перемикач змінює похибку напрямку.</p></figcaption>
+        <div class="ctl"><div class="seg" data-k="s"><button aria-pressed="false" data-v="1">похибка 1°</button><button aria-pressed="true" data-v="3">3°</button><button aria-pressed="false" data-v="5">5°</button><button aria-pressed="false" data-v="10">10°</button></div></div><div class="plot"></div></figure>
+      <figure class="chart"><figcaption><h3>Усі числа</h3></figcaption><div class="apwrap"><table class="ap" id="cg-tbl"></table></div></figure>
+      <figure class="chart"><figcaption><h3>Яку частку гексів із пожежею 2023 бачить камера</h3><p class="read"><b>Як читати:</b> три колонки міняють висоту щогли за дальності 10 км, дві міняють дальність за щогли 15 м. Вежі стоять там, де їх поставила гілка TP.</p></figcaption><div class="apwrap"><table class="ap" id="cg-cov"></table></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Як це виглядає: відео й мапа синхронізовані</h3><p>Запустіть відео.</p></div>
+      <figure class="chart">
+        <figcaption><h3>Камера CAM-02: детекція в кадрі → клин на мапі</h3>
+          <p class="read"><b>Як читати:</b> положення рамки по горизонталі дає <b>азимут</b>; дальність камера не знає, тому підсвічуємо весь клин — але лише ті гекси, які <b>видно з вишки</b> з урахуванням рельєфу. Помаранчевий — дим, зелений — люди. Відео це запис пожежі в Карсті 2022 року, показаний як демо: він ілюструє механіку, а не Дадью.</p></figcaption>
+        <div class="cam">
+          <div><video id="d-video" muted loop playsinline controls preload="metadata"></video>
+            <div class="detlist" id="d-dets"></div></div>
+          <div><div class="legend"><span><i style="background:var(--pos)"></i>клин диму</span><span><i style="background:var(--rule)"></i>клин людей</span><span><i style="background:#4f6a7d"></i>видно з вишки</span><span><i style="background:#2a3530"></i>у секторі, закрито рельєфом</span></div>
+            <div class="map sm" id="m-cam" role="img" aria-label="Зона камери"></div></div>
+        </div>
+      </figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div><div class="mean" id="cg-mean"></div></div>
+  </div>
+</section>

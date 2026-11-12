@@ -1,0 +1,15 @@
+# Асистент застосунку (eaglewings/assistant): окреме середовище, бо PandasAI 3 потребує pandas 2.x
+# python3.11 -m venv .venv-api && .venv-api/bin/pip install -r requirements/assistant.txt && .venv-api/bin/pip install -e . --no-deps
+pandas==2.3.3
+pandasai==3.0.0
+pandasai-litellm==0.0.1
+litellm==1.98.0
+fastapi==0.151.0
+uvicorn==0.54.0
+pydantic==2.14.1
+duckdb==1.5.6
+sqlglot==25.34.1
+geopandas==1.0.1
+shapely==2.2.0
+httpx==0.28.1
+websockets==17.3

@@ -1,0 +1,32 @@
+<section id="sd">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">SD</span><div><span class="label">SD · детекція зі супутника</span><h2>Чи видно машини згори, і за якої роздільності?</h2></div></div>
+    <div class="answer" id="sd-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Відкритий набір VEDAI з рамками машин, розмитий до трьох роздільностей.</p></div>
+      <div class="dsbadge" id="sd-ds"></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Дві готові моделі без донавчання.</p></div>
+      <div class="apwrap"><table class="ap" id="sd-ap"></table></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: 50/50 кадрів</h4><p>Поріг впевненості обрано на половині кадрів, числа на другій. Модель не вчилась на цих даних.</p></div><div><h4>Метрика: AP@0.5</h4><p>Якість рамок незалежно від порога: рамка правильна, якщо перекривається з еталоном щонайменше наполовину.</p></div></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>12,5 → 50 см це симуляція зниження якості.</p></div>
+      <figure class="chart" id="c-sd-res"><figcaption><h3>AP@0.5 за роздільністю</h3><p class="read"><b>Як читати:</b> праворуч краще; вус це 95 % довірчий інтервал.</p></figcaption>
+        <div class="ctl"><div class="seg" data-k="m"><button aria-pressed="true" data-v="ap50">AP@0.5</button><button aria-pressed="false" data-v="f1">F1</button><button aria-pressed="false" data-v="precision">Precision</button><button aria-pressed="false" data-v="recall">Recall</button></div><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+        <div class="legend typeleg"></div><div class="plot"></div><div class="tbl" hidden></div></figure>
+      <figure class="chart"><figcaption><h3>Усі числа</h3><p class="read"><b>Як читати:</b> поріг обрано на половині кадрів, решта чисел на другій половині; інтервал 95 %.</p></figcaption><div class="apwrap"><table class="ap" id="sd-tbl"></table></div></figure>
+      <figure class="chart"><figcaption><h3>Скільки пікселів займає легкове авто</h3><p class="read"><b>Як читати:</b> що менше пікселів, то гірше. Перехід від 25 до 50 см робить авто вдвічі меншим, а AP падає більш ніж удвічі.</p></figcaption><div class="apwrap"><table class="ap" id="sd-px"></table></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Відкриті знімки парку</h3><p>Яку роздільність дають відкриті знімки Esri парку і що з неї видно. Розмітки для парку немає, тому точності тут немає.</p></div>
+      <div class="tiles" id="sd-tiles"></div>
+      <figure class="chart" id="c-d-gsd">
+        <figcaption><h3>Чому людей не видно із супутника</h3><p class="read"><b>Як читати:</b> скільки пікселів займає об'єкт на відкритому знімку Esri (0,45 м/піксель); детекторам потрібно ~10 px.</p></figcaption>
+        <div class="plot"></div>
+      </figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div>
+      <div class="mean" id="sd-mean"></div>
+    </div>
+  </div>
+</section>

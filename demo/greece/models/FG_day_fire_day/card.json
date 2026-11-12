@@ -1,0 +1,21 @@
+{
+ "code": "FG_day_fire_day",
+ "task": "Прогноз: день із вогнем",
+ "kind": "виміряно",
+ "approach": "lightgbm",
+ "selection": "max PR-AUC на 2022 (навчання 2021)",
+ "metric": "PR-AUC",
+ "test": {
+  "pr_auc": 0.257079513,
+  "ci": "0.160–0.360",
+  "recall_at_10": 0.4188481675
+ },
+ "datasets": [
+  "fire_day_daily@v1 (034079eed02505c9)"
+ ],
+ "created": "2026-11-12T13:12",
+ "files": [
+  "card.json",
+  "model.joblib"
+ ]
+}

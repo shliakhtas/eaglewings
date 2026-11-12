@@ -1,0 +1,21 @@
+{
+ "code": "FG_spread",
+ "task": "Куди піде вогонь за добу",
+ "kind": "виміряно",
+ "approach": "lightgbm_lag",
+ "selection": "max macro F1 на 27 пожежах, leave-one-fire-out",
+ "metric": "F1 нової площі",
+ "test": {
+  "f1_24": 0.2757262432,
+  "f1_48": 0.3095775556,
+  "front_err_m": 1673.4170307047
+ },
+ "datasets": [
+  "fire_spread_cells@v1 (d501d1958db3a1c1)"
+ ],
+ "created": "2026-11-12T13:12",
+ "files": [
+  "card.json"
+ ],
+ "model": "правило або алгоритм без навчання: параметри в цій картці"
+}

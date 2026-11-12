@@ -1,0 +1,20 @@
+{
+ "code": "LD",
+ "task": "Де зрубано ліс",
+ "kind": "виміряно",
+ "approach": "lightgbm",
+ "selection": "max метрики на валідації",
+ "metric": "F1",
+ "test": {
+  "value": 0.2921194407,
+  "ci": "0.18–0.40"
+ },
+ "datasets": [
+  "logging_gr_pixels@v1 (61fbfc8ea11bda2c)"
+ ],
+ "created": "2026-11-12T13:12",
+ "files": [
+  "card.json"
+ ],
+ "model": "правило або алгоритм без навчання: параметри в цій картці"
+}

@@ -1,0 +1,30 @@
+<section id="cd">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">CD</span><div><span class="label">CD · детекція з фото й відео</span><h2>Наскільки точні детектори камер і фотопасток?</h2></div></div>
+    <div class="answer" id="cd-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>D-Fire: дим і вогонь із рамками. ENA24: кадри фотопасток. Це фото, відео в еталоні немає.</p></div>
+      <div class="dsbadge" id="cd-ds"></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>GroundingDINO за текстовим запитом, без донавчання.</p></div>
+      <div class="apwrap"><table class="ap" id="cd-ap"></table></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: 50/50 кадрів</h4><p>Поріг на половині кадрів, числа на другій. На ENA24 лише 22 кадри з машинами.</p></div><div><h4>Метрики</h4><p>AP@0.5 там, де є рамки. На ENA24 лише лейбл кадру, тому ROC-AUC, повнота й частка хибних кадрів.</p></div></div>
+    </div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3></div>
+      <figure class="chart" id="c-cd-res"><figcaption><h3>AP@0.5, D-Fire</h3><p class="read"><b>Як читати:</b> праворуч краще; вус це 95 % довірчий інтервал.</p></figcaption>
+        <div class="ctl"><div class="seg" data-k="m"><button aria-pressed="true" data-v="ap50">AP@0.5</button><button aria-pressed="false" data-v="f1">F1</button><button aria-pressed="false" data-v="precision">Precision</button><button aria-pressed="false" data-v="recall">Recall</button></div><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+        <div class="legend typeleg"></div><div class="plot"></div><div class="tbl" hidden></div></figure>      <figure class="chart"><figcaption><h3>Усі числа</h3></figcaption><div class="apwrap"><table class="ap" id="cd-tbl"></table></div></figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Перевірка на відео й фото</h3><p>Запис пожежі в Карсті 2022 року і 8 фото з парку. Розмітки немає, тому це не точність, а звірка з порогом, обраним на еталоні.</p></div>
+      <div class="tiles" id="cd-tiles"></div>
+      <figure class="chart">
+        <figcaption><h3>YOLO-World на фото з парку</h3><p class="read"><b>Як читати:</b> рамки — знайдені об'єкти з впевненістю; зелений — людина, світлий — авто.</p></figcaption>
+        <div class="photos" id="d-photos"></div>
+      </figure>
+    </div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div>
+      <div class="mean" id="cd-mean"></div>
+    </div>
+  </div>
+</section>

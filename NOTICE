@@ -1,0 +1,23 @@
+EagleWings
+Copyright 2026 Myroslav Shliakhta
+
+This product includes software developed as EagleWings, a data-analytics
+platform template (pipelines, research page, app with an AI assistant,
+landing). Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Attribution requested for derivative works and redistributions:
+
+    Built with EagleWings
+
+If you use EagleWings in research, please cite it as described in
+CITATION.cff.
+
+Third-party components
+----------------------
+EagleWings depends on third-party packages that keep their own licenses.
+They are installed separately and are not bundled with this distribution.
+
+Notably, the optional computer-vision branches (requirements/cv.txt) use
+Ultralytics YOLO, which is licensed under AGPL-3.0. Using those branches
+brings the obligations of AGPL-3.0 for that component. The core pipeline
+(requirements/ds.txt) does not require it.

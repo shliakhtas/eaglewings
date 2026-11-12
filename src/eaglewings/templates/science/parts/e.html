@@ -1,0 +1,61 @@
+<section id="e">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">FG</span><div><span class="label">FG · поширення пожежі</span><h2>Пожежа вже йде: куди вона піде завтра й післязавтра?</h2></div></div>
+    <div class="answer" id="e-answer"></div>
+
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Один рядок — (пожежа, момент t, ще не згорілий гекс H3 ≈ 0,74 км² у радіусі 12 км). Лейбл — чи згорить до t+24 / t+48 год.</p></div>
+      <div class="dsbadge" id="e-ds"></div>
+      <figure class="chart" id="c-e-fires">
+        <figcaption><h3>28 багатоденних пожеж Греції 2021–2025</h3><p class="read"><b>Як читати:</b> кожне коло — пожежа з FIRMS VIIRS (розмір — кількість детекцій); помаранчева з рамкою — <b>Еврос-2023</b>, недоторканий тест. Решта 27 — для навчання й вибору підходу.</p></figcaption>
+        <div class="map sm" id="m-fires" role="img" aria-label="Мапа пожеж Греції"></div>
+      </figure>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Від «росте рівномірно» до моделі, що знає вітер, схил і паливо.</p></div>
+      <div class="apwrap"><table class="ap" id="e-ap"></table></div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how">
+        <div><h4>Протокол: leave-one-fire-out + недоторканий тест</h4><p>Підхід порівнюємо так: вчимося на 26 пожежах, перевіряємо на 27-й — і так для кожної (параметри правил і поріг моделі підбираються лише на навчальних пожежах). Переможця обираємо за цим. <b>Еврос-2023</b> не бере участі ні в чому — на ньому лише фінальний звіт.</p>
+          <div class="plot" id="e-proto"></div>
+          <ul><li>Крок — доба (VIIRS пролітає ~2 рази на добу); «зріз» о 13:00 UTC.</li><li>Вітер на наступну добу — фактичний NASA POWER як заміна прогнозу погоди.</li><li>CI — bootstrap по пожежах.</li></ul></div>
+        <div><h4>Метрика: F1 нової площі (+ похибка фронту)</h4><p>Рахуємо лише <b>нову</b> площу — те, що ще не горіло. <b>F1</b> карає і за перебільшення, і за пропуски; <b>macro</b> — кожна пожежа має однакову вагу (інакше Еврос заглушив би все). <b>Похибка фронту</b> — медіана відстані від реально згорілого гекса до найближчого спрогнозованого: «на скільки метрів промахнулись».</p></div>
+      </div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Результат</h3><p>Вибір — 27 пожеж (LOFO), тест — Еврос-2023.</p></div>
+      <div class="ctl"><span class="label" style="margin-right:4px">Горизонт</span><div class="seg" id="e-h"><button aria-pressed="true" data-v="24">+24 год</button><button aria-pressed="false" data-v="48">+48 год</button></div></div>
+      <figure class="chart" id="c-e-res">
+        <figcaption><h3>F1 нової площі</h3><p class="read"><b>Як читати:</b> праворуч — краще; кільце з вусом — середнє по 27 пожежах з 95 % CI (на цьому обирали); заповнена точка — тест на Евросі-2023.</p></figcaption>
+        <div class="ctl"><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+        <div class="legend typeleg"></div>
+        <div class="plot"></div><div class="tbl" hidden></div>
+      </figure>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Діагностика</h3></div>
+      <figure class="chart" id="c-e-map">
+        <figcaption><h3>Еврос-2023 день за днем: прогноз проти того, що сталося</h3><p class="read"><b>Як читати:</b> темні гекси — вже згоріло на момент прогнозу; помаранчевий — згоріло й спрогнозовано; світлий — спрогнозовано, але не згоріло; сірий — згоріло, але пропущено. Стрілка — куди дме вітер.</p></figcaption>
+        <div class="ctl"><div class="seg" data-k="ap"></div><div class="seg" data-k="h"><button aria-pressed="true" data-v="24">+24 год</button><button aria-pressed="false" data-v="48">+48 год</button></div></div>
+        <div class="slider"><button class="tbtn" id="e-play">▶ відтворити</button><input type="range" id="e-range" min="0" max="10" value="2" aria-label="День пожежі"><b id="e-lab"></b></div>
+        <div class="legend"><span><i style="background:#4a2a18"></i>уже згоріло</span><span><i style="background:var(--pos)"></i>збіг</span><span><i style="background:var(--r4)"></i>перебільшення</span><span><i style="background:#8f9a8f"></i>пропуск</span></div>
+        <div class="map" id="m-spread2" role="img" aria-label="Прогноз поширення Еврос-2023"></div>
+      </figure>
+      <div class="grid2">
+        <figure class="chart" id="c-e-daily">
+          <figcaption><h3>Якість прогнозу по днях пожежі</h3><p class="read"><b>Як читати:</b> F1 нової площі на кожну добу Евросу-2023; у дні вибухового росту прогнозувати найважче.</p></figcaption>
+          <div class="legend" id="e-daily-leg"></div>
+          <div class="plot"></div>
+        </figure>
+        <figure class="chart" id="c-e-fire">
+          <figcaption><h3>На яких пожежах підхід працює</h3><p class="read"><b>Як читати:</b> кожна точка — одна з 27 пожеж (LOFO); праворуч — краще. Чемпіон проти базової «рівномірний ріст».</p></figcaption>
+          <div class="ctl"><span class="sp"></span><button class="tbtn">Таблиця</button></div>
+          <div class="plot"></div><div class="tbl" hidden></div>
+        </figure>
+      </div>
+    </div>
+
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div><div class="mean" id="e-mean"></div></div>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+<section id="xm">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">XM</span><div><span class="label">XM · крос-джерельний матчинг</span><h2>Які сигнали з усіх джерел це одна подія?</h2></div></div>
+    <div class="answer" id="xm-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Потік демо за 90 днів: один рядок це сигнал. Більшість сигналів симульовані.</p></div>
+      <div class="dsbadge" id="xm-ds"></div>
+      <figure class="chart"><figcaption><h3>Сигнали за джерелом</h3></figcaption><div class="apwrap"><table class="ap" id="xm-tbl"></table></div></figure></div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Три способи зведення й сітка параметрів для найскладнішого.</p></div>
+      <div class="apwrap"><table class="ap" id="xm-ap"></table></div></div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: вибір на перших 60 днях</h4><p>Для кожного типу події окремо: пожежа, вирубка, машини. Параметри обрано на перших 60 днях, тест на останніх 30. Перебрано 36 пар радіус × час.</p></div>
+      <div><h4>Еталон і метрика</h4><p><b>Еталон це задум симуляції:</b> сигнали одного сценарію й одного дня вважаються однією подією. Це не спостереження. Метрика BCubed F1, як у FM.</p></div></div></div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Як результат залежить від параметрів</h3><p>Обрано на валідації, клітинка з рамкою.</p></div>
+      <div class="ctl"><span class="label" style="margin-right:4px">Тип події</span><div class="seg" id="xm-kind"><button aria-pressed="true" data-v="fire">Пожежа</button><button aria-pressed="false" data-v="logging">Вирубка</button><button aria-pressed="false" data-v="vehicle">Машини</button></div></div>
+      <figure class="chart" id="c-xm-grid"><figcaption><h3>BCubed F1 на валідації: радіус × час</h3><p class="read"><b>Як читати:</b> рядки це радіус, стовпці час. Що темніше, то гірше.</p></figcaption><div class="apwrap"><table class="ap" id="xm-grid"></table></div></figure></div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Результат</h3><p>Тест, останні 30 днів.</p></div>
+      <figure class="chart" id="c-xm-res"><figcaption><h3>BCubed F1 на тесті: обраний варіант проти простіших</h3><p class="read"><b>Як читати:</b> BCubed F1 від 0 до 1, праворуч краще. Він показує, чи стоїть кожен сигнал разом зі своєю подією і не змішаний із чужими. Тест це останні 30 днів, еталон це симуляція.</p></figcaption><div class="legend typeleg"></div><div class="plot"></div></figure></div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Що це означає</h3></div><div class="mean" id="xm-mean"></div></div>
+  </div>
+</section>

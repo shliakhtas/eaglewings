@@ -1,0 +1,22 @@
+<section id="ar">
+  <div class="wrap">
+    <div class="task-hd"><span class="tk">AR</span><div><span class="label">AR · ареалізація появи</span><h2>Де щось регулярно повторюється?</h2></div></div>
+    <div class="answer" id="ar-answer"></div>
+    <div class="step"><div class="sn"><span class="n">1</span><h3>Дані</h3><p>Реальні пожежі Греції 2021–2025: точки FIRMS, зведені правилом FM. Один рядок це пожежа. Потік демо тут не використовується.</p></div>
+      <div class="dsbadge" id="ar-ds"></div></div>
+    <div class="step"><div class="sn"><span class="n">2</span><h3>Підходи</h3><p>Чи дають контури ареалів більше за простіші способи показати гарячі місця.</p></div>
+      <div class="apwrap"><table class="ap" id="ar-ap"></table></div></div>
+    <div class="step"><div class="sn"><span class="n">3</span><h3>Як перевіряли й чим міряли</h3></div>
+      <div class="how"><div><h4>Протокол: лише минуле</h4><p>Ареали року Y будуються лише з пожеж попередніх років. Радіус і вікно обрано на 2023, тест на 2024 і 2025. Усі методи отримують рівно однакову площу: 1,5 % гексів H3.</p></div>
+      <div><h4>Метрика: PAI</h4><p>У скільки разів щільність нових пожеж у зоні вища за середню. 1 це випадковий вибір. Також частка нових пожеж, що потрапила в зону.</p></div></div></div>
+    <div class="step"><div class="sn"><span class="n">4</span><h3>Як результат залежить від параметрів</h3><p>Обрано на 2023, клітинка з рамкою.</p></div>
+      <figure class="chart"><figcaption><h3>PAI на валідації: радіус × вікно</h3><p class="read"><b>Як читати:</b> рядки це радіус DBSCAN, стовпці кількість минулих років. Що яскравіше, то краще.</p></figcaption><div class="apwrap"><table class="ap" id="ar-grid"></table></div></figure></div>
+    <div class="step"><div class="sn"><span class="n">5</span><h3>Результат</h3><p>Тест 2024–2025.</p></div>
+      <figure class="chart" id="c-ar-res"><figcaption><h3>PAI на тесті, однакова площа 1,5 %</h3><p class="read"><b>Як читати:</b> праворуч краще, 1 це випадковий вибір; вус це 95 % довірчий інтервал.</p></figcaption><div class="legend typeleg"></div><div class="plot"></div></figure>
+      <figure class="chart"><figcaption><h3>Усі числа</h3></figcaption><div class="apwrap"><table class="ap" id="ar-num"></table></div></figure></div>
+    <div class="step"><div class="sn"><span class="n">6</span><h3>Діагностика</h3></div>
+      <figure class="chart"><figcaption><h3>Ареали за всі роки</h3><p class="read"><b>Як читати:</b> контур це ареал, що яскравіше, то більше пожеж у ньому. Показано 60 найбільших.</p></figcaption><div class="map" id="m-ar" role="img" aria-label="Ареали пожеж Греції"></div></figure>
+      <figure class="chart"><figcaption><h3>Ареали демо</h3><p class="read">Це потік демо, здебільшого симульований. Тут метрика не рахується.</p></figcaption><div class="apwrap"><table class="ap" id="ar-tbl"></table></div></figure></div>
+    <div class="step"><div class="sn"><span class="n">7</span><h3>Що це означає</h3></div><div class="mean" id="ar-mean"></div></div>
+  </div>
+</section>

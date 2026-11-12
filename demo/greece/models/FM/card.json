@@ -1,0 +1,27 @@
+{
+ "code": "FM",
+ "task": "Які теплові точки це одна пожежа",
+ "kind": "виміряно",
+ "approach": "st_2.0km_5d",
+ "selection": "max BCubed F1 на 2021–2023",
+ "metric": "BCubed F1",
+ "test": {
+  "bcubed_f1": 0.989846299,
+  "ci": [
+   0.9825255878,
+   0.9973642108
+  ]
+ },
+ "datasets": [
+  "matching_firms_effis@v1 (666ad98568c85614)"
+ ],
+ "created": "2026-11-12T13:12",
+ "params": {
+  "km": null,
+  "days": null
+ },
+ "files": [
+  "card.json"
+ ],
+ "model": "правило або алгоритм без навчання: параметри в цій картці"
+}
